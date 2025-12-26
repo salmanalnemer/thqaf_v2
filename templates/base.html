@@ -97,9 +97,7 @@
               />
             </div>
 
-            <button class="login" type="button" id="loginBtn">
-              تسجيل دخول الإدارة
-            </button>
+            
 
             <button
               class="hamburger"
@@ -121,13 +119,13 @@
           <div class="row">
             <div class="menu" id="menu">
               <!-- الثلاث عناصر الأساسية المطلوبة -->
-              <a class="link {% if request.path == '/' %}active{% endif %}"
+              <a class="link"
                  href="{% url 'landing' %}" title="الصفحة الرئيسية" data-page="home">
                 <i class="ti ti-home" aria-hidden="true"></i>
                 <span>الرئيسية</span>
               </a>
 
-              <a class="link {% if request.path|slice:':9' == '/courses/' %}active{% endif %}"
+              <a class="link "
                  href="{% url 'public_courses' %}" data-page="services">
                 <i class="ti ti-category" aria-hidden="true"></i>
                 <span>الدورات والمبادرات</span>
@@ -330,6 +328,9 @@
             <h3 class="s-footer__title">روابط مهمة</h3>
             <div class="s-footer__divider"></div>
             <ul class="s-footer__list">
+              <button class="login" type="button" id="loginBtn">
+              بوابة الإدارة
+            </button>
               <li><a href="https://mutaaheb.srca.org.sa/"><i class="ti ti-external-link"></i>منصة متأهب</a></li>
               <li><a href="https://srcavolunteer.srca.org.sa/#!/ar/home"><i class="ti ti-external-link"></i>منصة تطوع هيئة الهلال الأحمر السعودي</a></li>
               <li><a href="https://www.srca.org.sa/"><i class="ti ti-external-link"></i>الموقع الرسمي لهيئة الهلال الأحمر السعودي</a></li>
