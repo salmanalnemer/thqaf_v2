@@ -1,0 +1,403 @@
+{% load static %}
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Tabler Icons -->
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@tabler/icons-webfont@2.47.0/tabler-icons.min.css"
+    />
+
+    <!-- Global CSS (Header + Footer) -->
+    <link rel="stylesheet" href="{% static 'assets/css/base.css' %}" />
+    {% block extra_css %}{% endblock %}
+
+    <title>{% block title %}ثقف | THQAF{% endblock %}</title>
+  </head>
+
+  <body data-page="{% block body_page %}home{% endblock %}">
+    <!-- ================= HEADER ================= -->
+    <header class="header" aria-label="هيدر الموقع">
+      <!-- شريط علوي رسمي -->
+      <div class="topbar" aria-label="شريط معلومات علوي">
+        <div class="wrap">
+          <div class="row">
+            <div class="meta">
+              <span>
+                <i class="ti ti-time" aria-hidden="true"></i>
+                <span id="liveTime" aria-live="polite">الوقت الآن —</span>
+              </span>
+            </div>
+
+            <div class="mini-actions">
+              
+              <a class="link {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
+                 href="{% url 'contact' %}" data-page="contact">
+                <i class="ti ti-mail" aria-hidden="true"></i>
+                <span>تواصل معنا</span>
+              </a>
+              <button
+                class="mini-btn"
+                type="button"
+                id="quickLang"
+                aria-label="اللغة"
+              >
+                <i class="ti ti-world" aria-hidden="true"></i>
+                العربية
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- صف الهوية -->
+      <div class="top">
+        <div class="wrap">
+          <div class="row">
+            <a class="brand" href="{% url 'landing' %}" aria-label="العودة إلى الرئيسية">
+              <div class="logo">
+                <img
+                  src="{% static 'assets/img/logostraid2.png' %}"
+                  alt="شعار بوابة ثقف"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="stack">
+                <b>ثقف</b>
+                <span>بوابة ثقف لإدارة الدورات التدريبية</span>
+              </div>
+            </a>
+
+            <div class="search" role="search" aria-label="بحث سريع">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M21 21l-4.3-4.3m1.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <input
+                id="globalSearch"
+                type="search"
+                placeholder="بحث سريع..."
+                autocomplete="off"
+              />
+            </div>
+
+            <button class="login" type="button" id="loginBtn">
+              تسجيل دخول الإدارة
+            </button>
+
+            <button
+              class="hamburger"
+              id="hamburger"
+              type="button"
+              aria-label="القائمة"
+              aria-expanded="false"
+              aria-controls="menu"
+            >
+              ☰
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- القوائم -->
+      <nav class="nav" aria-label="القائمة الرئيسية">
+        <div class="wrap">
+          <div class="row">
+            <div class="menu" id="menu">
+              <!-- الثلاث عناصر الأساسية المطلوبة -->
+              <a class="link {% if request.path == '/' %}active{% endif %}"
+                 href="{% url 'landing' %}" title="الصفحة الرئيسية" data-page="home">
+                <i class="ti ti-home" aria-hidden="true"></i>
+                <span>الرئيسية</span>
+              </a>
+
+              <a class="link {% if request.path|slice:':9' == '/courses/' %}active{% endif %}"
+                 href="{% url 'public_courses' %}" data-page="services">
+                <i class="ti ti-category" aria-hidden="true"></i>
+                <span>الدورات والمبادرات</span>
+              </a>
+
+              <!-- الدورات التدريبية (Dropdown) -->
+              <div class="dropdown" id="coursesDropdown">
+                <button
+                  class="dropbtn"
+                  id="coursesBtn"
+                  type="button"
+                  aria-controls="coursesMenu"
+                  aria-expanded="false"
+                >
+                  <i class="ti ti-book" aria-hidden="true"></i>
+                  <span>إدارة الدورات التدريبية</span>
+                  <i class="ti ti-chevron-down" aria-hidden="true"></i>
+                </button>
+
+                <div class="dropdown-menu" id="coursesMenu" role="menu" aria-label="قائمة الدورات التدريبية">
+                  <a class="dropdown-item" href="#">
+                    <i class="ti ti-check" aria-hidden="true"></i>
+                    <span>اعتماد الدورات</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#">
+                    <i class="ti ti-player-play" aria-hidden="true"></i>
+                    <span>الدورات المفتوحة</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#">
+                    <i class="ti ti-lock" aria-hidden="true"></i>
+                    <span>الدورات المغلقة</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#">
+                    <i class="ti ti-x" aria-hidden="true"></i>
+                    <span>الدورات المرفوضة</span>
+                  </a>
+
+                  <hr />
+
+                  <a class="dropdown-item" href="#">
+                    <i class="ti ti-user" aria-hidden="true"></i>
+                    <span>دوراتي</span>
+                  </a>
+                </div>
+              </div>
+
+              <a class="link" href="#">
+                <i class="ti ti-users" aria-hidden="true"></i>
+                <span>المستفيدين</span>
+              </a>
+
+              <a class="link" href="#">
+                <i class="ti ti-certificate" aria-hidden="true"></i>
+                <span>إصدار الشهادات</span>
+              </a>
+
+              <!-- الدعم الفني (Dropdown) -->
+              <div class="dropdown" id="supportDropdown">
+                <button
+                  class="dropbtn"
+                  id="supportBtn"
+                  type="button"
+                  aria-controls="supportMenu"
+                  aria-expanded="false"
+                >
+                  <i class="ti ti-headset" aria-hidden="true"></i>
+                  <span>الدعم الفني</span>
+                  <i class="ti ti-chevron-down" aria-hidden="true"></i>
+                </button>
+
+                <div class="dropdown-menu" id="supportMenu" role="menu" aria-label="قائمة الدعم الفني">
+                  <a class="dropdown-item" href="#" role="menuitem">
+                    <i class="ti ti-message-circle" aria-hidden="true"></i>
+                    <span>طلب دعم فني</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#" role="menuitem">
+                    <i class="ti ti-list-details" aria-hidden="true"></i>
+                    <span>طلباتي</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#" role="menuitem">
+                    <i class="ti ti-alert-circle" aria-hidden="true"></i>
+                    <span>البلاغات المفتوحة</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#" role="menuitem">
+                    <i class="ti ti-circle-check" aria-hidden="true"></i>
+                    <span>البلاغات المغلقة</span>
+                  </a>
+
+                  <a class="dropdown-item" href="#" role="menuitem">
+                    <i class="ti ti-arrow-up-right-circle" aria-hidden="true"></i>
+                    <span>تصعيد عطل فني</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <!-- ✅ مودل تسجيل دخول الإدارة -->
+    <div class="admin-modal-overlay" id="adminModal" aria-hidden="true">
+      <div class="admin-modal" role="dialog" aria-modal="true" aria-label="تسجيل دخول الإدارة">
+        <button class="admin-close" id="closeAdminModal" type="button" aria-label="إغلاق">×</button>
+
+        <h3>تسجيل دخول الإدارة</h3>
+
+        <div class="admin-field">
+          <label for="adminPhone">رقم الجوال</label>
+          <input
+            id="adminPhone"
+            type="tel"
+            placeholder="05xxxxxxxx"
+            autocomplete="off"
+            inputmode="numeric"
+          />
+        </div>
+
+        <div class="admin-field">
+          <label for="adminPass">الرقم السري</label>
+          <input
+            id="adminPass"
+            type="password"
+            placeholder="••••••••"
+            autocomplete="current-password"
+          />
+        </div>
+
+        <div class="admin-actions">
+          <button class="admin-login-btn" id="adminLoginSubmit" type="button">
+            تسجيل الدخول
+          </button>
+          <button class="admin-cancel-btn" id="cancelAdminModal" type="button">
+            إلغاء
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ================= CONTENT ================= -->
+    <main>
+      {% block content %}{% endblock %}
+    </main>
+
+    <!-- ================= FOOTER ================= -->
+    <footer class="s-footer" dir="rtl" aria-label="تذييل الموقع">
+      <div class="s-footer__wrap">
+        <div class="s-footer__grid" role="navigation" aria-label="روابط التذييل">
+
+          <section class="s-footer__col" aria-label="وسائل التواصل الاجتماعي">
+            <h3 class="s-footer__title">وسائل التواصل الاجتماعي</h3>
+            <div class="s-footer__divider"></div>
+
+            <div class="s-footer__icons" aria-label="روابط التواصل">
+              <a class="s-footer__icon" href="#" aria-label="يوتيوب"><i class="ti ti-brand-youtube"></i></a>
+              <a class="s-footer__icon" href="#" aria-label="لينكدإن"><i class="ti ti-brand-linkedin"></i></a>
+              <a class="s-footer__icon" href="#" aria-label="إنستغرام"><i class="ti ti-brand-instagram"></i></a>
+              <a class="s-footer__icon" href="#" aria-label="X"><i class="ti ti-brand-x"></i></a>
+            </div>
+
+            <h3 class="s-footer__title s-footer__mt">أدوات الوصول</h3>
+            <div class="s-footer__divider"></div>
+
+            <div class="s-footer__icons" aria-label="أدوات الوصول">
+              <button class="s-footer__icon" type="button" aria-label="تكبير"><i class="ti ti-zoom-in"></i></button>
+              <button class="s-footer__icon" type="button" aria-label="تصغير"><i class="ti ti-zoom-out"></i></button>
+              <button class="s-footer__icon" type="button" aria-label="قارئ شاشة"><i class="ti ti-ear"></i></button>
+              <button class="s-footer__icon" type="button" aria-label="تحويل النص إلى صوت"><i class="ti ti-microphone-2"></i></button>
+              <button class="s-footer__icon" type="button" aria-label="إمكانية الوصول"><i class="ti ti-wheelchair"></i></button>
+            </div>
+
+            <h3 class="s-footer__title s-footer__mt">حمّل تطبيقات الجوال</h3>
+            <div class="s-footer__divider"></div>
+
+            <div class="s-footer__stores" aria-label="متاجر التطبيقات">
+              <a class="s-footer__store" href="#" aria-label="Google Play">
+                <i class="ti ti-brand-google-play"></i>
+                <span>
+                  <small>تحميل من</small>
+                  <b>Google Play</b>
+                </span>
+              </a>
+              <a class="s-footer__store" href="#" aria-label="App Store">
+                <i class="ti ti-brand-apple"></i>
+                <span>
+                  <small>تحميل من</small>
+                  <b>App Store</b>
+                </span>
+              </a>
+            </div>
+          </section>
+
+          <section class="s-footer__col" aria-label="روابط مهمة">
+            <h3 class="s-footer__title">روابط مهمة</h3>
+            <div class="s-footer__divider"></div>
+            <ul class="s-footer__list">
+              <li><a href="https://mutaaheb.srca.org.sa/"><i class="ti ti-external-link"></i>منصة متأهب</a></li>
+              <li><a href="https://srcavolunteer.srca.org.sa/#!/ar/home"><i class="ti ti-external-link"></i>منصة تطوع هيئة الهلال الأحمر السعودي</a></li>
+              <li><a href="https://www.srca.org.sa/"><i class="ti ti-external-link"></i>الموقع الرسمي لهيئة الهلال الأحمر السعودي</a></li>
+            </ul>
+          </section>
+
+          <section class="s-footer__col" aria-label="الدعم والمساعدة">
+            <h3 class="s-footer__title">الدعم والمساعدة</h3>
+            <div class="s-footer__divider"></div>
+            <ul class="s-footer__list">
+              <li><a href="{% url 'contact' %}">اتصل بنا</a></li>
+              <li><a href="#">الشكاوى والاقتراحات</a></li>
+              <li><a href="#">الأسئلة الشائعة</a></li>
+              <li><a href="#">المركز الموحد</a></li>
+              <li><a href="#">إمكانية الوصول</a></li>
+            </ul>
+          </section>
+
+          <section class="s-footer__col" aria-label="التواصل الإعلامي">
+            <h3 class="s-footer__title">التواصل الإعلامي</h3>
+            <div class="s-footer__divider"></div>
+            <ul class="s-footer__list">
+              <li><a href="#">الأخبار والإعلانات</a></li>
+            </ul>
+          </section>
+
+          <section class="s-footer__col" aria-label="الجهة">
+            <h3 class="s-footer__title">الجهة</h3>
+            <div class="s-footer__divider"></div>
+            <ul class="s-footer__list">
+              <li><a href="#">من نحن؟</a></li>
+            </ul>
+          </section>
+        </div>
+
+        <div class="s-footer__subbar" aria-label="روابط سفلية">
+          <a href="#">سياسة الخصوصية</a>
+          <span class="s-footer__dot">•</span>
+          <a href="#">أمن المعلومات</a>
+          <span class="s-footer__dot">•</span>
+          <a href="#">خريطة الموقع</a>
+        </div>
+
+        <div class="s-footer__bottom">
+          <div class="s-footer__logos" aria-label="الشعارات">
+            <img src="{% static 'assets/img/hero-logo.png' %}" alt="شعار الجهة" loading="lazy" />
+          </div>
+
+          <h6>
+            يدعم هذا الموقع جميع أنماط دقة الشاشة وكافة الأجهزة الذكية
+            <br />
+            الموقع لا يدعم متصفح internet explorer
+          </h6>
+
+          <div class="s-footer__copy" aria-label="حقوق النشر">
+            <p><b>جميع الحقوق محفوظة © 2025</b></p>
+            <p>تم تطويره وصيانته بواسطة مـرتـكـز | MORTQZ</p>
+          </div>
+        </div>
+      </div>
+
+      <button class="s-footer__float" type="button" aria-label="إعدادات الوصول السريع">
+        <span class="s-footer__kebab" aria-hidden="true"></span>
+      </button>
+    </footer>
+
+    <!-- JS (Header interactions) -->
+    <script src="{% static 'assets/js/base.js' %}" defer></script>
+    {% block extra_js %}{% endblock %}
+  </body>
+</html>

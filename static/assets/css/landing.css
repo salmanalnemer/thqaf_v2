@@ -1,0 +1,429 @@
+/**********************/
+/*INDEX STYLE*/
+/**********************/
+:root {
+  --srca-red: #b5121b;
+  --srca-red-2: #d11a2a;
+  --srca-navy: #0b2a4a;
+  --srca-navy-2: #123b66;
+
+  --bg: #f3f6fa;
+  --card: #ffffff;
+  --line: #e6eaf0;
+
+  --text: #102033;
+  --muted: #64748b;
+
+  --shadow: 0 18px 40px rgba(16, 32, 51, 0.1);
+  --shadow2: 0 10px 22px rgba(16, 32, 51, 0.08);
+
+  --radius: 20px;
+  --radius2: 16px;
+
+  --wrap: 1200px;
+}
+
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+
+/* ملاحظة: لو عندك body styling في base.css، هذا سيعزز نفس الخلفية */
+body {
+  margin: 0;
+  font-family: "Tajawal", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(900px 520px at 12% -10%, rgba(181, 18, 27, 0.12), transparent 55%),
+    radial-gradient(900px 520px at 90% 0%, rgba(11, 42, 74, 0.12), transparent 58%),
+    radial-gradient(900px 520px at 50% 120%, rgba(181, 18, 27, 0.06), transparent 58%),
+    linear-gradient(180deg, #ffffff, var(--bg));
+  overflow-x: hidden;
+}
+
+a { color: inherit; text-decoration: none; }
+img { max-width: 100%; display: block; }
+.wrap { max-width: var(--wrap); margin: 0 auto; padding: 0 16px; }
+
+/* ===== Hero ===== */
+.thqafNajizHero {
+  position: relative;
+  padding: 34px 0 12px;
+  isolation: isolate;
+}
+
+.thqafNajizHero::before {
+  content: "";
+  position: absolute;
+  inset: -20px 0 auto 0;
+  height: 380px;
+  pointer-events: none;
+  background:
+    radial-gradient(520px 360px at 18% 10%, rgba(181, 18, 27, 0.12), transparent 60%),
+    radial-gradient(520px 360px at 78% 5%, rgba(11, 42, 74, 0.1), transparent 62%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+  z-index: -2;
+}
+
+.thqafNajizHero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, rgba(11, 42, 74, 0.06) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(11, 42, 74, 0.06) 1px, transparent 1px);
+  background-size: 42px 42px;
+  mask-image: radial-gradient(closest-side at 50% 20%, rgba(0,0,0,0.55), transparent 70%);
+  opacity: 0.55;
+  z-index: -1;
+}
+
+/* ===== Title ===== */
+.heroTitle {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 0 16px;
+}
+
+.heroTitle h1 {
+  margin: 0;
+  font-weight: 900;
+  color: var(--srca-navy);
+  font-size: 32px;
+  letter-spacing: 0.2px;
+  line-height: 1.25;
+}
+
+.heroTitle h2 {
+  margin: 6px 0 0;
+  font-weight: 900;
+  color: var(--srca-red);
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.heroTitle p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.95;
+  font-size: 14px;
+  max-width: 64ch;
+}
+
+.heroBadge {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: 999px;
+  background: rgba(11, 42, 74, 0.06);
+  border: 1px solid rgba(11, 42, 74, 0.12);
+  color: var(--srca-navy);
+  font-weight: 900;
+  font-size: 12px;
+  white-space: nowrap;
+  height: max-content;
+}
+.heroBadge .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--srca-red);
+  box-shadow: 0 0 0 4px rgba(181, 18, 27, 0.1);
+}
+
+/* ===== Cards Rail ===== */
+.cardsRail {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(12, 1fr);
+  margin-top: 10px;
+}
+
+.nCard { grid-column: span 12; }
+@media (min-width: 820px) { .nCard { grid-column: span 6; } }
+@media (min-width: 1160px) { .nCard { grid-column: span 3; } }
+
+.nCard {
+  background: var(--card);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow2);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  position: relative;
+  transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+.nCard::before {
+  content: "";
+  position: absolute;
+  inset: auto -60px -60px auto;
+  width: 190px;
+  height: 190px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(181, 18, 27, 0.18), rgba(11, 42, 74, 0.08), transparent 65%);
+  opacity: 0.55;
+  pointer-events: none;
+}
+
+.nCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+  border-color: rgba(181, 18, 27, 0.2);
+}
+
+.nHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: linear-gradient(180deg, #fff, #fbfcfe);
+  border-bottom: 1px solid var(--line);
+}
+
+.nBrand { display: flex; align-items: center; gap: 10px; min-width: 0; }
+
+.nSub {
+  font-weight: 900;
+  font-size: 12px;
+  color: var(--srca-navy);
+  background: rgba(11, 42, 74, 0.06);
+  border: 1px solid rgba(11, 42, 74, 0.1);
+  padding: 6px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.nTick {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--srca-red);
+  box-shadow: 0 0 0 4px rgba(181, 18, 27, 0.12);
+  flex: 0 0 auto;
+}
+
+.nBody {
+  padding: 14px 14px 12px;
+  display: grid;
+  gap: 10px;
+  height: 100%;
+}
+
+.nBody h3 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 900;
+  color: var(--srca-navy);
+  line-height: 1.35;
+}
+
+.nBody p {
+  margin: 0;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.7;
+  font-size: 13.5px;
+  min-height: 44px;
+}
+
+/* ===== صورة داخل div (مثل طلبك) ===== */
+.illuWrap {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #f8fafc;
+}
+
+.illuWrap::after {
+  content: "";
+  position: absolute;
+  inset: -40% -40%;
+  background: linear-gradient(120deg, transparent 35%, rgba(255, 255, 255, 0.45), transparent 65%);
+  transform: translateX(-35%);
+  opacity: 0.75;
+  pointer-events: none;
+  transition: transform 0.55s ease;
+}
+.nCard:hover .illuWrap::after { transform: translateX(35%); }
+
+.card-img {
+  width: 100%;
+  height: 110px;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* اربط الصور هنا */
+.card-img.img-people   { background-image: url("/static/assets/img/pepole.jpg"); }
+.card-img.img-business { background-image: url("/static/assets/img/business.jpg"); }
+.card-img.img-gov      { background-image: url("/static/assets/img/gov.jpg"); }
+.card-img.img-edu      { background-image: url("/static/assets/img/edu.png"); }
+
+/* تمييز الأنواع */
+.nCard.gov .nSub,
+.nCard.per .nSub {
+  color: var(--srca-red);
+  background: rgba(181, 18, 27, 0.06);
+  border-color: rgba(181, 18, 27, 0.12);
+}
+
+.nActions { display: flex; justify-content: flex-start; margin-top: auto; }
+
+.nBtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid transparent;
+  cursor: pointer;
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 14px;
+  transition: transform 0.12s ease, filter 0.12s ease, box-shadow 0.12s ease;
+  white-space: nowrap;
+  width: 100%;
+}
+
+.nBtn.primary {
+  color: #fff;
+  background: linear-gradient(135deg, var(--srca-red), var(--srca-red-2));
+  box-shadow: 0 12px 22px rgba(181, 18, 27, 0.16);
+}
+.nBtn.primary:hover { transform: translateY(-1px); filter: brightness(1.02); }
+.nBtn.primary:active { transform: translateY(0) scale(0.99); }
+
+.arr { display: inline-block; font-weight: 900; transform: translateY(-1px); }
+
+/* ===== Stats ===== */
+.stats { padding: 14px 0 20px; }
+.statsGrid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 12px;
+}
+.stat {
+  grid-column: span 12;
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow2);
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  position: relative;
+  overflow: hidden;
+}
+.stat::before {
+  content: "";
+  position: absolute;
+  inset: auto -40px -40px auto;
+  width: 170px;
+  height: 170px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 30%, rgba(181, 18, 27, 0.14), rgba(11, 42, 74, 0.06), transparent 65%);
+  opacity: 0.45;
+}
+@media (min-width: 760px) { .stat { grid-column: span 4; } }
+
+.stat b {
+  font-size: 22px;
+  font-weight: 900;
+  color: var(--srca-navy);
+  letter-spacing: 0.2px;
+  z-index: 1;
+}
+.stat span {
+  color: var(--muted);
+  font-weight: 800;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: start;
+  z-index: 1;
+}
+
+/* ===== FAQ ===== */
+.faq { padding: 6px 0 34px; }
+.faqBox {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow2);
+  padding: 16px;
+}
+.faq h3 {
+  margin: 0 0 12px;
+  font-weight: 900;
+  color: var(--srca-navy);
+  font-size: 18px;
+}
+
+details {
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  padding: 10px 12px;
+  background: #f8fafc;
+  margin: 10px 0;
+  transition: background 0.12s ease;
+}
+details[open] { background: #ffffff; }
+
+summary {
+  cursor: pointer;
+  font-weight: 900;
+  color: var(--srca-navy);
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+summary::-webkit-details-marker { display: none; }
+
+summary::after {
+  content: "⌄";
+  font-size: 18px;
+  color: var(--srca-red);
+  transform: rotate(0deg);
+  transition: transform 0.15s ease;
+  flex: 0 0 auto;
+}
+details[open] summary::after { transform: rotate(180deg); }
+
+details p {
+  margin: 10px 0 0;
+  color: var(--muted);
+  font-weight: 700;
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+/* Mobile title */
+@media (max-width: 720px) {
+  .heroTitle { flex-direction: column; align-items: flex-start; }
+  .heroTitle h1 { font-size: 28px; }
+}
+
+:focus-visible {
+  outline: 3px solid rgba(181, 18, 27, 0.35);
+  outline-offset: 3px;
+  border-radius: 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * { transition: none !important; animation: none !important; }
+  .nCard:hover { transform: none; }
+  .nCard:hover .illuWrap::after { transform: translateX(-35%); }
+}

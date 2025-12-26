@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}ثقف | THQAF{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'assets/css/landing.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<section class="thqafNajizHero">
+  <div class="wrap">
+
+    <!-- العنوان (مثل المرفق) -->
+    <div class="heroTitle">
+      <div>
+        <h1>بوابة ثقف</h1>
+        <h2>بوابة تُعنى بالدورات والمبادرات الإسعافية</h2>
+        <p>
+          سهلت بوابة ثقف طلبات الدورات التدريبية لجميع فئات المجتمع عبر بوابة موحّدة.
+          تتيح التسجيل للجهات والأفراد وإدارة المستفيدين وإصدار الشهادات إلكترونيًا.
+        </p>
+      </div>
+
+      <div class="heroBadge">
+        <span class="dot" aria-hidden="true"></span>
+        THQAF
+      </div>
+    </div>
+
+    <!-- الكروت (4 جنب بعض مثل المرفق) -->
+    <div class="cardsRail">
+
+      <!-- أفراد -->
+      <article class="nCard per">
+        <div class="nHead">
+          <div class="nBrand">
+            <span class="nTick" aria-hidden="true"></span>
+            <span class="nSub">People | أفراد</span>
+          </div>
+        </div>
+
+        <div class="nBody">
+          <h3>ثقف أفراد</h3>
+          <p>تسجيل دخول الأفراد ومشاهدة الدورات المسجل بها ومعاينة الشهادات.</p>
+
+          <div class="illuWrap" aria-hidden="true">
+            <div class="card-img img-people"></div>
+          </div>
+
+          <div class="nActions">
+            <a class="nBtn primary" href="/accounts/login/">
+              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- أعمال -->
+      <article class="nCard">
+        <div class="nHead">
+          <div class="nBrand">
+            <span class="nTick" aria-hidden="true"></span>
+            <span class="nSub">Business | أعمال</span>
+          </div>
+        </div>
+
+        <div class="nBody">
+          <h3>ثقف أعمال</h3>
+          <p>تسجيل الدخول لممثلي المنشآت والشركات وتقديم طلبات الدورات.</p>
+
+          <div class="illuWrap" aria-hidden="true">
+            <div class="card-img img-business"></div>
+          </div>
+
+          <div class="nActions">
+            <a class="nBtn primary" href="/accounts/login/org/">
+              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- جهات حكومية -->
+      <article class="nCard gov">
+        <div class="nHead">
+          <div class="nBrand">
+            <span class="nTick" aria-hidden="true"></span>
+            <span class="nSub">Gov. | حكومة</span>
+          </div>
+        </div>
+
+        <div class="nBody">
+          <h3>ثقف جهات حكومية</h3>
+          <p>تسجيل الدخول لممثلي الجهات الحكومية والقطاعات واعتماد الدورات.</p>
+
+          <div class="illuWrap" aria-hidden="true">
+            <div class="card-img img-gov"></div>
+          </div>
+
+          <div class="nActions">
+            <a class="nBtn primary" href="/accounts/login/org/">
+              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+      <!-- تعليم -->
+      <article class="nCard">
+        <div class="nHead">
+          <div class="nBrand">
+            <span class="nTick" aria-hidden="true"></span>
+            <span class="nSub">edu | تعليم</span>
+          </div>
+        </div>
+
+        <div class="nBody">
+          <h3>ثقف مدارس وجامعات</h3>
+          <p>تسجيل الدخول للمدارس والجامعات وتنسيق برامج الدورات والمبادرات.</p>
+
+          <div class="illuWrap" aria-hidden="true">
+            <div class="card-img img-edu"></div>
+          </div>
+
+          <div class="nActions">
+            <a class="nBtn primary" href="/accounts/login/org/">
+              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
+            </a>
+          </div>
+        </div>
+      </article>
+
+    </div>
+
+  </div>
+</section>
+
+<!-- Stats -->
+<section class="stats">
+  <div class="wrap">
+    <div class="statsGrid">
+      <div class="stat">
+        <b class="count" data-count-to="{{ stats.courses|default:0 }}">{{ stats.courses|default:0 }}</b>
+        <span>عدد الدورات التدريبية</span>
+      </div>
+      <div class="stat">
+        <b class="count" data-count-to="{{ stats.beneficiaries|default:0 }}">{{ stats.beneficiaries|default:0 }}</b>
+        <span>عدد المستفيدين</span>
+      </div>
+      <div class="stat">
+        <b class="count" data-count-to="{{ stats.certificates|default:0 }}">{{ stats.certificates|default:0 }}</b>
+        <span>عدد الشهادات المصدّرة إلكترونيًا</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="wrap">
+    <div class="faqBox">
+      <h3>الأسئلة الشائعة</h3>
+
+      {% for f in faqs %}
+        <details>
+          <summary>{{ f.q }}</summary>
+          <p>{{ f.a }}</p>
+        </details>
+      {% empty %}
+        <details open>
+          <summary>لا توجد أسئلة حالياً</summary>
+          <p>سيتم إضافة الأسئلة الشائعة لاحقاً من لوحة التحكم.</p>
+        </details>
+      {% endfor %}
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'assets/js/landing.js' %}" defer></script>
+{% endblock %}
