@@ -4,16 +4,20 @@ import secrets
 from datetime import timedelta
 
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
+from django.contrib.auth.models import (
+    AbstractBaseUser,
+    PermissionsMixin,
+    BaseUserManager,
+)
 from django.core.validators import RegexValidator
 from django.utils import timezone
 
 
 class UserType(models.TextChoices):
-    ORG = "ORG", "Organization"
-    IND = "IND", "Individual"
-    TRAINER = "TRAINER", "Trainer"
-    STAFF = "STAFF", "Staff"
+    ORG = "ORG", "جهة"
+    IND = "IND", "فرد"
+    TRAINER = "TRAINER", "مدرب"
+    STAFF = "STAFF", "موظف"
 
 
 phone_validator = RegexValidator(
@@ -35,7 +39,7 @@ class UserManager(BaseUserManager):
         else:
             user.set_unusable_password()
 
-        # افتراضيًا: غير مفعل حتى OTP
+        # افتراضيًا: غير مفعل حتى يتم التحقق عبر OTP (إلا إذا تم تمرير is_active=True صراحةً)
         user.is_active = bool(extra_fields.get("is_active", False))
 
         user.save(using=self._db)
@@ -48,9 +52,9 @@ class UserManager(BaseUserManager):
         extra_fields.setdefault("is_active", True)
 
         if extra_fields.get("is_staff") is not True:
-            raise ValueError("Superuser must have is_staff=True.")
+            raise ValueError("يجب أن يكون Superuser بقيمة is_staff=True.")
         if extra_fields.get("is_superuser") is not True:
-            raise ValueError("Superuser must have is_superuser=True.")
+            raise ValueError("يجب أن يكون Superuser بقيمة is_superuser=True.")
 
         return self.create_user(email=email, password=password, **extra_fields)
 
@@ -86,6 +90,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     REQUIRED_FIELDS: list[str] = []
 
     class Meta:
+        verbose_name = "مستخدم"
+        verbose_name_plural = "المستخدمون"
+        ordering = ["-date_joined"]
         indexes = [
             models.Index(fields=["user_type"]),
             models.Index(fields=["email"]),
@@ -97,19 +104,27 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class EmailOTP(models.Model):
     """
-    OTP لتفعيل البريد:
+    رمز تحقق عبر البريد (OTP)
     - 6 أرقام
     - صلاحية افتراضية 10 دقائق
-    - تحديد محاولات
+    - تتبع المحاولات
     """
-    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="email_otps")
-    code = models.CharField(max_length=6)
-    created_at = models.DateTimeField(default=timezone.now)
-    expires_at = models.DateTimeField()
-    attempts = models.PositiveSmallIntegerField(default=0)
-    is_used = models.BooleanField(default=False)
+    user = models.ForeignKey(
+        "accounts.User",
+        on_delete=models.CASCADE,
+        related_name="email_otps",
+        verbose_name="المستخدم",
+    )
+    code = models.CharField("رمز التحقق", max_length=6)
+    created_at = models.DateTimeField("تاريخ الإنشاء", default=timezone.now)
+    expires_at = models.DateTimeField("ينتهي في")
+    attempts = models.PositiveSmallIntegerField("عدد المحاولات", default=0)
+    is_used = models.BooleanField("تم استخدامه؟", default=False)
 
     class Meta:
+        verbose_name = "رمز تحقق بريد"
+        verbose_name_plural = "رموز تحقق البريد"
+        ordering = ["-created_at"]
         indexes = [
             models.Index(fields=["user", "is_used"]),
             models.Index(fields=["expires_at"]),
@@ -117,8 +132,7 @@ class EmailOTP(models.Model):
 
     @staticmethod
     def generate_code() -> str:
-        # 6 digits
-        return f"{secrets.randbelow(1_000_000):06d}"
+        return f"{secrets.randbelow(1_000_000):06d}"  # 6 digits
 
     @classmethod
     def create_for_user(cls, user: "User", ttl_minutes: int = 10) -> "EmailOTP":

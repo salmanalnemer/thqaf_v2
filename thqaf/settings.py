@@ -10,7 +10,6 @@ from pathlib import Path
 import os
 from typing import List
 
-
 # =========================
 # مسارات المشروع
 # =========================
@@ -62,20 +61,14 @@ SECRET_KEY = env("DJANGO_SECRET_KEY", "django-insecure-change-me-in-production")
 
 DEBUG = env_bool("DJANGO_DEBUG", True)
 
-# أمثلة:
-# DJANGO_ALLOWED_HOSTS=example.com,www.example.com,127.0.0.1
 ALLOWED_HOSTS = env_list(
     "DJANGO_ALLOWED_HOSTS",
-    default=["127.0.0.1", "localhost"] if DEBUG else []
+    default=["127.0.0.1", "localhost"] if DEBUG else [],
 )
 
-# CSRF trusted origins (مهم عند استخدام HTTPS والدومينات)
-# مثال:
-# DJANGO_CSRF_TRUSTED_ORIGINS=https://example.com,https://www.example.com
 CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS", default=[])
 
-# إن كنت خلف Proxy / Load Balancer (مثل Nginx) وتريد احترام X-Forwarded-Proto
-# DJANGO_SECURE_PROXY_SSL_HEADER=true
+# إن كنت خلف Proxy / Load Balancer وتريد احترام X-Forwarded-Proto
 if env_bool("DJANGO_SECURE_PROXY_SSL_HEADER", False):
     SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
@@ -84,7 +77,6 @@ if env_bool("DJANGO_SECURE_PROXY_SSL_HEADER", False):
 # تعريف التطبيقات
 # =========================
 INSTALLED_APPS = [
-    # Django core
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -92,33 +84,30 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
 
-    # THQAF apps (الأساسية كبداية)
-    "accounts",
+    "accounts.apps.AccountsConfig",
     "organizations",
     "individuals",
-
-    # Pages (Landing + Public pages)
-    "pages",
+    "pages.apps.PagesConfig",
 ]
+
+
 
 AUTH_USER_MODEL = "accounts.User"
 
 
 # =========================
 # الوسطاء (Middleware)
-# LocaleMiddleware مهم للغة/التعريب
 # =========================
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
-    "django.middleware.locale.LocaleMiddleware",  # مهم للتعريب
+    "django.middleware.locale.LocaleMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
-
 
 ROOT_URLCONF = "thqaf.urls"
 
@@ -129,7 +118,7 @@ ROOT_URLCONF = "thqaf.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [BASE_DIR / "templates"],  # مجلد قوالب عام
+        "DIRS": [BASE_DIR / "templates"],  # templates/base.html ...etc
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -141,24 +130,15 @@ TEMPLATES = [
     },
 ]
 
-
 WSGI_APPLICATION = "thqaf.wsgi.application"
 
 
 # =========================
 # قاعدة البيانات
-# افتراضيًا SQLite، ويمكن التبديل عبر متغيرات بيئة (PostgreSQL مثلاً)
 # =========================
 DB_ENGINE = env("DB_ENGINE", "sqlite")
 
 if DB_ENGINE == "postgres":
-    # مثال متغيرات:
-    # DB_ENGINE=postgres
-    # DB_NAME=thqaf_db
-    # DB_USER=thqaf_user
-    # DB_PASSWORD=...
-    # DB_HOST=127.0.0.1
-    # DB_PORT=5432
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.postgresql",
@@ -171,7 +151,6 @@ if DB_ENGINE == "postgres":
         }
     }
 else:
-    # SQLite (مناسب للتطوير/التجربة)
     DATABASES = {
         "default": {
             "ENGINE": "django.db.backends.sqlite3",
@@ -202,27 +181,24 @@ LANGUAGES = [
 ]
 
 TIME_ZONE = "Asia/Riyadh"
-
 USE_I18N = True
 USE_TZ = True
 
-LOCALE_PATHS = [
-    BASE_DIR / "locale",
-]
+LOCALE_PATHS = [BASE_DIR / "locale"]
 
 
 # =========================
 # الملفات الثابتة والوسائط
 # =========================
-STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"  # للإنتاج (collectstatic)
+STATIC_URL = "/static/"
+STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# للتطوير: هذا مهم عشان يقرأ static من مشروعك
+# للتطوير
 STATICFILES_DIRS = [
     BASE_DIR / "static",
 ]
 
-MEDIA_URL = "media/"
+MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
 
@@ -236,39 +212,38 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 # جلسات + Cookies (تحسينات أمان)
 # =========================
 SESSION_COOKIE_HTTPONLY = True
-CSRF_COOKIE_HTTPONLY = False  # يفضل تركها False غالبًا (Django default)
 SESSION_COOKIE_SAMESITE = "Lax"
 CSRF_COOKIE_SAMESITE = "Lax"
 
 
 # =========================
-# البريد الإلكتروني (OTP) - اختياري لاحقًا
+# Email (SMTP - Hostinger)
 # =========================
-# مثال:
-# EMAIL_BACKEND=smtp
-# EMAIL_HOST=smtp.gmail.com
-# EMAIL_PORT=587
-# EMAIL_HOST_USER=...
-# EMAIL_HOST_PASSWORD=...
-# EMAIL_USE_TLS=true
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend" if DEBUG else "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
-EMAIL_HOST = env("EMAIL_HOST", "smtp.gmail.com")
-EMAIL_PORT = env_int("EMAIL_PORT", 587)
-EMAIL_HOST_USER = env("EMAIL_HOST_USER", "")
-EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD", "")
-EMAIL_USE_TLS = env_bool("EMAIL_USE_TLS", True)
-DEFAULT_FROM_EMAIL = env("DEFAULT_FROM_EMAIL", "THQAF <no-reply@thqaf.local>")
+EMAIL_HOST = env("THQAF_EMAIL_HOST", "smtp.hostinger.com")
+EMAIL_PORT = env_int("THQAF_EMAIL_PORT", 587)
+
+EMAIL_HOST_USER = env("THQAF_EMAIL_USER", "support@thqaf.com")
+EMAIL_HOST_PASSWORD = env("THQAF_EMAIL_PASSWORD", "")
+
+# 587 = TLS
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+
+DEFAULT_FROM_EMAIL = f'بوابة ثقف <{EMAIL_HOST_USER}>'
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
+
+# إلى أين تصل رسائل "تواصل معنا"
+CONTACT_TO_EMAIL = env("CONTACT_TO_EMAIL", EMAIL_HOST_USER)
+
 
 
 # =========================
 # إعدادات أمان إضافية للإنتاج
 # =========================
-# عند DEBUG=False ننصح بتفعيل التالي عبر متغيرات بيئة:
-# DJANGO_SECURE=true
 if env_bool("DJANGO_SECURE", False) and not DEBUG:
     SECURE_SSL_REDIRECT = True
-
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
 
@@ -281,31 +256,20 @@ if env_bool("DJANGO_SECURE", False) and not DEBUG:
 
 
 # =========================
-# Logging (لتتبع الأخطاء)
+# Logging
 # =========================
 LOG_LEVEL = env("DJANGO_LOG_LEVEL", "INFO")
-
-# تأكد أن مجلد logs موجود
 (LOGS_DIR := BASE_DIR / "logs").mkdir(exist_ok=True)
 
 LOGGING = {
     "version": 1,
     "disable_existing_loggers": False,
     "formatters": {
-        "verbose": {
-            "format": "[{asctime}] {levelname} {name} {message}",
-            "style": "{",
-        },
-        "simple": {
-            "format": "{levelname} {message}",
-            "style": "{",
-        },
+        "verbose": {"format": "[{asctime}] {levelname} {name} {message}", "style": "{"},
+        "simple": {"format": "{levelname} {message}", "style": "{"},
     },
     "handlers": {
-        "console": {
-            "class": "logging.StreamHandler",
-            "formatter": "simple" if DEBUG else "verbose",
-        },
+        "console": {"class": "logging.StreamHandler", "formatter": "simple" if DEBUG else "verbose"},
         "file": {
             "class": "logging.FileHandler",
             "filename": BASE_DIR / "logs" / "django.log",
