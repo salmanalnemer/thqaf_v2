@@ -12,123 +12,83 @@
 <section class="thqafNajizHero">
   <div class="wrap">
 
-    <!-- العنوان (مثل المرفق) -->
-    <div class="heroTitle">
-      <div>
+    <!-- ✅ شبكة عمودين: (العنوان) + (الكرتين) -->
+    <div class="heroGrid">
+
+      <!-- العمود: العنوان -->
+      <div class="heroTitle">
         <h1>بوابة ثقف</h1>
         <h2>بوابة تُعنى بالدورات والمبادرات الإسعافية</h2>
-        <h4>
+        <p class="heroLead">
           سهلت بوابة ثقف طلبات الدورات التدريبية لجميع فئات المجتمع عبر بوابة موحّدة.
           تتيح التسجيل للجهات والأفراد وإدارة المستفيدين وإصدار الشهادات إلكترونيًا.
-        </h4>
+        </p>
       </div>
 
-      
-    </div>
+      <!-- العمود: الكرتين -->
+      <div class="cardsRail">
 
-    <!-- الكروت (4 جنب بعض مثل المرفق) -->
-    <div class="cardsRail">
-
-      <!-- أفراد -->
-      <article class="nCard per">
-        <div class="nHead">
-          <div class="nBrand">
-            <span class="nTick" aria-hidden="true"></span>
-            <span class="nSub">People | أفراد</span>
-          </div>
-        </div>
-
-        <div class="nBody">
-          <h3>ثقف أفراد</h3>
-          <p>تسجيل دخول الأفراد ومشاهدة الدورات المسجل بها ومعاينة الشهادات.</p>
-
-          <div class="illuWrap" aria-hidden="true">
-            <div class="card-img img-people"></div>
+        <!-- أفراد -->
+        <article class="nCard per">
+          <div class="nHead">
+            <div class="nBrand">
+              <span class="nTick" aria-hidden="true"></span>
+              <span class="nSub">People | أفراد</span>
+            </div>
           </div>
 
-          <div class="nActions">
-            <a class="nBtn primary" href="/accounts/login/">
-              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
-            </a>
+          <div class="nBody">
+            <h3>ثقف أفراد</h3>
+            <p>تسجيل دخول الأفراد ومشاهدة الدورات المسجل بها .</p>
+
+            <!-- ✅ صورة الكرت -->
+            <div class="illuWrap" aria-hidden="true">
+              <img class="cardPhoto"
+                   src="{% static 'assets/img/pepole.jpg' %}"
+                   alt=""
+                   loading="lazy"
+                   decoding="async" />
+            </div>
+
+            <div class="nActions">
+              <a class="nBtn primary" href="/accounts/login/">
+                تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
+              </a>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <!-- أعمال -->
-      <article class="nCard">
-        <div class="nHead">
-          <div class="nBrand">
-            <span class="nTick" aria-hidden="true"></span>
-            <span class="nSub">Business | أعمال</span>
-          </div>
-        </div>
-
-        <div class="nBody">
-          <h3>ثقف أعمال</h3>
-          <p>تسجيل الدخول لممثلي المنشآت والشركات وتقديم طلبات الدورات.</p>
-
-          <div class="illuWrap" aria-hidden="true">
-            <div class="card-img img-business"></div>
-          </div>
-
-          <div class="nActions">
-            <a class="nBtn primary" href="/accounts/login/org/">
-              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
-            </a>
-          </div>
-        </div>
-      </article>
-
-      <!-- جهات حكومية -->
-      <article class="nCard gov">
-        <div class="nHead">
-          <div class="nBrand">
-            <span class="nTick" aria-hidden="true"></span>
-            <span class="nSub">Gov. | حكومة</span>
-          </div>
-        </div>
-
-        <div class="nBody">
-          <h3>ثقف جهات حكومية</h3>
-          <p>تسجيل الدخول لممثلي الجهات الحكومية والقطاعات واعتماد الدورات.</p>
-
-          <div class="illuWrap" aria-hidden="true">
-            <div class="card-img img-gov"></div>
+        <!-- جهات -->
+        <article class="nCard gov">
+          <div class="nHead">
+            <div class="nBrand">
+              <span class="nTick" aria-hidden="true"></span>
+              <span class="nSub">Allin | موحدة</span>
+            </div>
           </div>
 
-          <div class="nActions">
-            <a class="nBtn primary" href="/accounts/login/org/">
-              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
-            </a>
+          <div class="nBody">
+            <h3>ثقف جهات</h3>
+            <p>تسجيل الدخول لممثلي الجهات الحكومية والشركات والجمعيات.</p>
+
+            <!-- ✅ صورة الكرت -->
+            <div class="illuWrap" aria-hidden="true">
+              <img class="cardPhoto"
+                   src="{% static 'assets/img/gov.jpg' %}"
+                   alt=""
+                   loading="lazy"
+                   decoding="async" />
+            </div>
+
+            <div class="nActions">
+              <a class="nBtn primary" href="/accounts/login/org/">
+                تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
+              </a>
+            </div>
           </div>
-        </div>
-      </article>
+        </article>
 
-      <!-- تعليم -->
-      <article class="nCard">
-        <div class="nHead">
-          <div class="nBrand">
-            <span class="nTick" aria-hidden="true"></span>
-            <span class="nSub">edu | تعليم</span>
-          </div>
-        </div>
-
-        <div class="nBody">
-          <h3>ثقف مدارس وجامعات</h3>
-          <p>تسجيل الدخول للمدارس والجامعات وتنسيق برامج الدورات والمبادرات.</p>
-
-          <div class="illuWrap" aria-hidden="true">
-            <div class="card-img img-edu"></div>
-          </div>
-
-          <div class="nActions">
-            <a class="nBtn primary" href="/accounts/login/org/">
-              تسجيل الدخول <span class="arr" aria-hidden="true">←</span>
-            </a>
-          </div>
-        </div>
-      </article>
-
+      </div>
     </div>
 
   </div>

@@ -31,88 +31,7 @@
     <header class="header" aria-label="هيدر الموقع">
       <!-- شريط علوي رسمي -->
       <div class="topbar" aria-label="شريط معلومات علوي">
-        <div class="wrap">
-          <div class="row">
-            <div class="meta">
-              <span>
-                <i class="ti ti-time" aria-hidden="true"></i>
-                <span id="liveTime" aria-live="polite">الوقت الآن —</span>
-              </span>
-            </div>
-
-            <div class="mini-actions">
-              
-              <a class="link {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
-                 href="{% url 'contact' %}" data-page="contact">
-                <i class="ti ti-mail" aria-hidden="true"></i>
-                <span>تواصل معنا</span>
-              </a>
-              <button
-                class="mini-btn"
-                type="button"
-                id="quickLang"
-                aria-label="اللغة"
-              >
-                <i class="ti ti-world" aria-hidden="true"></i>
-                العربية
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- صف الهوية -->
-      <div class="top">
-        <div class="wrap">
-          <div class="row">
-            <a class="brand" href="{% url 'landing' %}" aria-label="العودة إلى الرئيسية">
-              <div class="logo">
-                <img
-                  src="{% static 'assets/img/logostraid2.png' %}"
-                  alt="شعار بوابة ثقف"
-                  loading="lazy"
-                  decoding="async"
-                />
-              </div>
-              <div class="stack">
-                <b>ثقف</b>
-                <span>بوابة ثقف لإدارة الدورات التدريبية</span>
-              </div>
-            </a>
-
-            <div class="search" role="search" aria-label="بحث سريع">
-              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                <path
-                  d="M21 21l-4.3-4.3m1.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                />
-              </svg>
-              <input
-                id="globalSearch"
-                type="search"
-                placeholder="بحث سريع..."
-                autocomplete="off"
-              />
-            </div>
-
-            
-
-            <button
-              class="hamburger"
-              id="hamburger"
-              type="button"
-              aria-label="القائمة"
-              aria-expanded="false"
-              aria-controls="menu"
-            >
-              ☰
-            </button>
-          </div>
-        </div>
-      </div>
-
+        
       <!-- القوائم -->
       <nav class="nav" aria-label="القائمة الرئيسية">
         <div class="wrap">
@@ -224,12 +143,110 @@
                     <i class="ti ti-arrow-up-right-circle" aria-hidden="true"></i>
                     <span>تصعيد عطل فني</span>
                   </a>
+                  
                 </div>
               </div>
+               <div class="mini-actions">
+              
+              <a class="link {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
+                 href="{% url 'contact' %}" data-page="contact">
+                <i class="ti ti-mail" aria-hidden="true"></i>
+                <span>تواصل معنا</span>
+              </a>
             </div>
           </div>
         </div>
       </nav>
+      <!-- الشريط العلوي المعلوماتي -->
+        <div class="wrap">
+          <div class="row">
+            <div class="meta">
+              <span>
+                <i class="ti ti-time" aria-hidden="true"></i>
+                <span id="liveTime" aria-live="polite">الوقت الآن —</span>
+              </span>
+            </div>
+
+            <div class="mini-actions">
+              
+              <a class="link {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
+                 href="{% url 'contact' %}" data-page="contact">
+                <i class="ti ti-mail" aria-hidden="true"></i>
+                <span>بوابة الدخول الموحد</span>
+              </a>
+               <div class="mini-actions">
+              
+              <a class="sam1 {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
+                 href="{% url 'contact' %}" data-page="contact">
+                <i class="ti ti-mail" aria-hidden="true"></i>
+                <span>إنشاء حساب</span>
+              </a>
+              <!--<button
+                class="mini-btn"
+                type="button"
+                id="quickLang"
+                aria-label="اللغة"
+              >
+                <i class="ti ti-world" aria-hidden="true"></i>
+                العربية
+              </button>-->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- صف الهوية -->
+      <div class="top">
+        <div class="wrap">
+          <div class="row">
+            <a class="brand" href="{% url 'landing' %}" aria-label="العودة إلى الرئيسية">
+              <div class="logo">
+                <img
+                  src="{% static 'assets/img/logostraid2.png' %}"
+                  alt="شعار بوابة ثقف"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="stack">
+                <b>ثقف</b>
+                <span>بوابة ثقف لإدارة الدورات التدريبية</span>
+              </div>
+            </a>
+
+            <div class="search" role="search" aria-label="بحث سريع">
+              <svg class="icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <path
+                  d="M21 21l-4.3-4.3m1.3-5.2a7.5 7.5 0 11-15 0 7.5 7.5 0 0115 0z"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+              </svg>
+              <input
+                id="globalSearch"
+                type="search"
+                placeholder="بحث سريع..."
+                autocomplete="off"
+              />
+            </div>
+
+            
+
+            <button
+              class="hamburger"
+              id="hamburger"
+              type="button"
+              aria-label="القائمة"
+              aria-expanded="false"
+              aria-controls="menu"
+            >
+              ☰
+            </button>
+          </div>
+        </div>
+      </div>
+
     </header>
 
     <!-- ✅ مودل تسجيل دخول الإدارة -->
@@ -303,7 +320,7 @@
               <button class="s-footer__icon" type="button" aria-label="إمكانية الوصول"><i class="ti ti-wheelchair"></i></button>
             </div>
 
-            <h3 class="s-footer__title s-footer__mt">حمّل تطبيقات الجوال</h3>
+            <!--<h3 class="s-footer__title s-footer__mt">حمّل تطبيقات الجوال</h3>
             <div class="s-footer__divider"></div>
 
             <div class="s-footer__stores" aria-label="متاجر التطبيقات">
@@ -321,7 +338,7 @@
                   <b>App Store</b>
                 </span>
               </a>
-            </div>
+            </div>-->
           </section>
 
           <section class="s-footer__col" aria-label="روابط مهمة">
