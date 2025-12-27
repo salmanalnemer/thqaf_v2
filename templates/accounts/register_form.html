@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} | ثقف{% endblock %}
+
+{% block content %}
+<main class="wrap" style="padding:24px 0;max-width:640px">
+  <h1 style="margin:0 0 12px">{{ title }}</h1>
+
+  {% if messages %}
+    <div style="margin:12px 0">
+      {% for message in messages %}
+        <div style="padding:10px;border-radius:10px;border:1px solid #eee;margin-bottom:8px">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate style="border:1px solid #eee;border-radius:16px;padding:16px">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div style="display:grid;gap:12px">
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.full_name.label }}</label>
+        {{ form.full_name }}
+        <div style="color:#b00">{{ form.full_name.errors }}</div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.email.label }}</label>
+        {{ form.email }}
+        <div style="color:#b00">{{ form.email.errors }}</div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.phone.label }}</label>
+        {{ form.phone }}
+        <small style="opacity:.75">{{ form.phone.help_text }}</small>
+        <div style="color:#b00">{{ form.phone.errors }}</div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.password1.label }}</label>
+        {{ form.password1 }}
+        <div style="color:#b00">{{ form.password1.errors }}</div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.password2.label }}</label>
+        {{ form.password2 }}
+        <div style="color:#b00">{{ form.password2.errors }}</div>
+      </div>
+
+      <button type="submit" style="padding:10px 12px;border-radius:12px;border:0;cursor:pointer">إنشاء الحساب</button>
+      <div style="opacity:.8">
+        لديك حساب؟ <a href="{% url 'accounts:login' %}">تسجيل الدخول</a>
+      </div>
+    </div>
+  </form>
+</main>
+{% endblock %}

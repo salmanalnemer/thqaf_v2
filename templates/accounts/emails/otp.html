@@ -1,0 +1,23 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>رمز تفعيل حسابك</title>
+  </head>
+  <body style="font-family:Tahoma,Arial,sans-serif;background:#f6f7fb;margin:0;padding:24px">
+    <div style="max-width:520px;margin:0 auto;background:#fff;border:1px solid #eee;border-radius:16px;padding:18px">
+      <h2 style="margin:0 0 12px">رمز تفعيل حسابك</h2>
+      <p style="margin:0 0 10px;opacity:.85">مرحباً {{ user.full_name|default:user.email }}،</p>
+      <p style="margin:0 0 14px;opacity:.85">استخدم الرمز التالي لتفعيل حسابك (صالح لمدة {{ ttl_minutes }} دقائق):</p>
+
+      <div style="font-size:28px;letter-spacing:4px;font-weight:700;text-align:center;padding:14px;border:1px dashed #ddd;border-radius:12px">
+        {{ code }}
+      </div>
+
+      <p style="margin:14px 0 0;opacity:.75">إذا لم تطلب إنشاء حساب، تجاهل هذه الرسالة.</p>
+      <hr style="border:0;border-top:1px solid #eee;margin:16px 0" />
+      <p style="margin:0;opacity:.65">© {{ year }} بوابة ثقف</p>
+    </div>
+  </body>
+</html>

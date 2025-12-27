@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل الدخول | ثقف{% endblock %}
+
+{% block content %}
+<main class="wrap" style="padding:24px 0;max-width:540px">
+  <h1 style="margin:0 0 12px">تسجيل الدخول</h1>
+
+  {% if messages %}
+    <div style="margin:12px 0">
+      {% for message in messages %}
+        <div style="padding:10px;border-radius:10px;border:1px solid #eee;margin-bottom:8px">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate style="border:1px solid #eee;border-radius:16px;padding:16px">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div style="display:grid;gap:12px">
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.email.label }}</label>
+        {{ form.email }}
+        <div style="color:#b00">{{ form.email.errors }}</div>
+      </div>
+      <div>
+        <label style="display:block;margin-bottom:6px">{{ form.password.label }}</label>
+        {{ form.password }}
+        <div style="color:#b00">{{ form.password.errors }}</div>
+      </div>
+
+      <button type="submit" style="padding:10px 12px;border-radius:12px;border:0;cursor:pointer">دخول</button>
+      <div style="opacity:.8">
+        ليس لديك حساب؟ <a href="{% url 'accounts:register_choice' %}">إنشاء حساب</a>
+      </div>
+    </div>
+  </form>
+</main>
+{% endblock %}

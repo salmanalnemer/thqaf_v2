@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block title %}تفعيل الحساب | ثقف{% endblock %}
+
+{% block content %}
+<main class="wrap" style="padding:24px 0;max-width:540px">
+  <h1 style="margin:0 0 12px">تفعيل الحساب</h1>
+  <p style="margin:0 0 18px;opacity:.85">أرسلنا رمز تحقق إلى: <strong>{{ user.email }}</strong></p>
+
+  {% if messages %}
+    <div style="margin:12px 0">
+      {% for message in messages %}
+        <div style="padding:10px;border-radius:10px;border:1px solid #eee;margin-bottom:8px">
+          {{ message }}
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  <form method="post" novalidate style="border:1px solid #eee;border-radius:16px;padding:16px">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+
+    <div>
+      <label style="display:block;margin-bottom:6px">{{ form.code.label }}</label>
+      {{ form.code }}
+      <div style="color:#b00">{{ form.code.errors }}</div>
+    </div>
+
+    <div style="display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap">
+      <button type="submit" style="padding:10px 12px;border-radius:12px;border:0;cursor:pointer">تفعيل</button>
+      <a href="{% url 'accounts:resend_otp' %}" style="text-decoration:none">إعادة إرسال الرمز</a>
+    </div>
+  </form>
+</main>
+{% endblock %}

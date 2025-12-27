@@ -20,6 +20,43 @@ class UserType(models.TextChoices):
     STAFF = "STAFF", "موظف"
 
 
+class Role(models.TextChoices):
+    """الأدوار التشغيلية داخل المنصة.
+
+    ملاحظة:
+    - role هو المرجع الأساسي للصلاحيات.
+    - user_type يبقى لتجميع الأنواع (جهة/فرد/مدرب/موظف) وللتوافق الخلفي.
+    """
+
+    SYSTEM_ADMIN = "SYSTEM_ADMIN", "مدير النظام"
+    DEPT_MANAGER = "DEPT_MANAGER", "مدير الإدارة"
+    SUPERVISOR = "SUPERVISOR", "مشرف"
+    COURSE_COORDINATOR = "COURSE_COORDINATOR", "منسق الدورات"
+    TRAINER = "TRAINER", "مدرب"
+    ORG = "ORG", "جهة"
+    IND = "IND", "فرد"
+
+
+ROLE_TO_USER_TYPE = {
+    Role.SYSTEM_ADMIN: UserType.STAFF,
+    Role.DEPT_MANAGER: UserType.STAFF,
+    Role.SUPERVISOR: UserType.STAFF,
+    Role.COURSE_COORDINATOR: UserType.STAFF,
+    Role.TRAINER: UserType.TRAINER,
+    Role.ORG: UserType.ORG,
+    Role.IND: UserType.IND,
+}
+
+
+RESTRICTED_SELF_SIGNUP_ROLES = {
+    Role.TRAINER,
+    Role.DEPT_MANAGER,
+    Role.SUPERVISOR,
+    Role.COURSE_COORDINATOR,
+    Role.SYSTEM_ADMIN,
+}
+
+
 phone_validator = RegexValidator(
     regex=r"^\d{10}$",
     message="رقم الجوال يجب أن يكون 10 أرقام فقط.",
@@ -46,6 +83,7 @@ class UserManager(BaseUserManager):
         return user
 
     def create_superuser(self, email: str, password: str, **extra_fields):
+        extra_fields.setdefault("role", Role.SYSTEM_ADMIN)
         extra_fields.setdefault("user_type", UserType.STAFF)
         extra_fields.setdefault("is_staff", True)
         extra_fields.setdefault("is_superuser", True)
@@ -79,6 +117,18 @@ class User(AbstractBaseUser, PermissionsMixin):
         db_index=True,
     )
 
+    role = models.CharField(
+        "الدور",
+        max_length=30,
+        choices=Role.choices,
+        default=Role.IND,
+        db_index=True,
+        help_text=(
+            "يحدد صلاحيات المستخدم داخل النظام. "
+            "تنبيه: أدوار (مدرب/مدير إدارة/مشرف/منسق دورات) يتم إنشاؤها من مدير النظام فقط."
+        ),
+    )
+
     is_active = models.BooleanField("مفعل", default=False)
     is_staff = models.BooleanField("موظف إداري", default=False)
 
@@ -98,8 +148,83 @@ class User(AbstractBaseUser, PermissionsMixin):
             models.Index(fields=["email"]),
         ]
 
+        permissions = [
+            ("manage_users", "إدارة المستخدمين بالكامل"),
+            ("view_all_data", "مشاهدة جميع البيانات في النظام"),
+            ("manage_courses", "إدارة الدورات"),
+            ("approve_courses", "اعتماد الدورات"),
+        ]
+
     def __str__(self) -> str:
         return self.email
+
+    def save(self, *args, **kwargs):
+        """مزامنة user_type و is_staff مع الدور."""
+        if self.role:
+            self.user_type = ROLE_TO_USER_TYPE.get(self.role, self.user_type)
+        # الوصول إلى Django Admin: مقصور على مدير النظام
+        if self.role == Role.SYSTEM_ADMIN:
+            self.is_staff = True
+        elif self.is_superuser:
+            # إن وُجدت حالات ترحيل قديمة
+            self.is_staff = True
+        else:
+            self.is_staff = False
+        super().save(*args, **kwargs)
+
+    # ====== Helpers for role checks ======
+    @property
+    def is_system_admin(self) -> bool:
+        return self.is_superuser or self.role == Role.SYSTEM_ADMIN
+
+    @property
+    def is_dept_manager(self) -> bool:
+        return self.role == Role.DEPT_MANAGER
+
+    @property
+    def is_supervisor(self) -> bool:
+        return self.role == Role.SUPERVISOR
+
+    @property
+    def is_course_coordinator(self) -> bool:
+        return self.role == Role.COURSE_COORDINATOR
+
+    @property
+    def is_trainer(self) -> bool:
+        return self.role == Role.TRAINER
+
+    @property
+    def is_organization(self) -> bool:
+        return self.role == Role.ORG
+
+    @property
+    def is_individual(self) -> bool:
+        return self.role == Role.IND
+
+    # ====== Permission gates (role-first, then Django perms) ======
+    def can_manage_users(self) -> bool:
+        return self.is_system_admin or self.has_perm("accounts.manage_users")
+
+    def can_view_all_data(self) -> bool:
+        if self.is_system_admin:
+            return True
+        if self.role in {Role.DEPT_MANAGER, Role.SUPERVISOR}:
+            return True
+        return self.has_perm("accounts.view_all_data")
+
+    def can_manage_courses(self) -> bool:
+        if self.is_system_admin:
+            return True
+        if self.role in {Role.DEPT_MANAGER, Role.SUPERVISOR, Role.COURSE_COORDINATOR}:
+            return True
+        return self.has_perm("accounts.manage_courses")
+
+    def can_approve_courses(self) -> bool:
+        if self.is_system_admin:
+            return True
+        if self.role in {Role.DEPT_MANAGER, Role.SUPERVISOR}:
+            return True
+        return self.has_perm("accounts.approve_courses")
 
 
 class EmailOTP(models.Model):

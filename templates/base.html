@@ -169,15 +169,15 @@
 
             <div class="mini-actions">
               
-              <a class="link {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
-                 href="{% url 'contact' %}" data-page="contact">
+              <a class="link"
+                 href="{% url 'accounts:login' %}" data-page="login">
                 <i class="ti ti-mail" aria-hidden="true"></i>
                 <span>بوابة الدخول الموحد</span>
               </a>
                <div class="mini-actions">
               
-              <a class="sam1 {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
-                 href="{% url 'contact' %}" data-page="contact">
+              <a class="sam1"
+                 href="{% url 'accounts:register_choice' %}" data-page="register">
                 <i class="ti ti-mail" aria-hidden="true"></i>
                 <span>إنشاء حساب</span>
               </a>

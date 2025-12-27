@@ -4,5 +4,11 @@ from . import views
 app_name = "accounts"
 
 urlpatterns = [
-    path("", views.landing, name="landing"),
+    path("register/", views.register_choice, name="register_choice"),
+    path("register/individual/", views.register_individual, name="register_individual"),
+    path("register/organization/", views.register_organization, name="register_organization"),
+    path("verify-otp/", views.verify_otp, name="verify_otp"),
+    path("resend-otp/", views.resend_otp, name="resend_otp"),
+    path("login/", views.login_view, name="login"),
+    path("logout/", views.logout_view, name="logout"),
 ]

@@ -7,13 +7,13 @@ from .models import User, EmailOTP
 @admin.register(User)
 class UserAdmin(BaseUserAdmin):
     ordering = ("email",)
-    list_display = ("email", "full_name", "user_type", "is_active", "is_staff")
-    list_filter = ("user_type", "is_active", "is_staff")
+    list_display = ("email", "full_name", "role", "user_type", "is_active", "is_staff")
+    list_filter = ("role", "user_type", "is_active", "is_staff")
     search_fields = ("email", "full_name", "phone")
 
     fieldsets = (
         (None, {"fields": ("email", "password")}),
-        ("البيانات", {"fields": ("full_name", "phone", "user_type")}),
+        ("البيانات", {"fields": ("full_name", "phone", "role", "user_type")}),
         ("الصلاحيات", {"fields": ("is_active", "is_staff", "is_superuser", "groups", "user_permissions")}),
         ("تواريخ", {"fields": ("last_login", "date_joined")}),
     )
@@ -21,7 +21,7 @@ class UserAdmin(BaseUserAdmin):
     add_fieldsets = (
         (None, {
             "classes": ("wide",),
-            "fields": ("email", "full_name", "phone", "user_type", "password1", "password2", "is_active", "is_staff"),
+            "fields": ("email", "full_name", "phone", "role", "user_type", "password1", "password2", "is_active", "is_staff"),
         }),
     )
 
