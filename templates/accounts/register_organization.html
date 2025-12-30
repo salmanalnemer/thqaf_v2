@@ -1,0 +1,182 @@
+{% extends "base.html" %}
+
+{% block title %}تسجيل الجهات | ثقف{% endblock %}
+
+{% block content %}
+<main class="wrap" style="padding:26px 0;max-width:900px">
+
+  <div style="
+    --brand:#0b3d73;
+    --text:#0f172a;
+    --muted:#667085;
+    --border:#dbe7ff;
+    --soft:#f4f8ff;
+    --danger:#b42318;
+    --shadow: 0 14px 34px rgba(2, 22, 56, .10);
+  ">
+
+    <header style="margin-bottom:14px">
+      <h1 style="margin:0;font-size:22px;font-weight:900;color:var(--text);letter-spacing:.2px">
+        تسجيل جهة
+      </h1>
+      <div style="margin-top:6px;color:var(--muted);line-height:1.8">
+        سيتم إرسال <b>رمز تحقق</b> إلى البريد الإلكتروني لتفعيل الحساب.
+      </div>
+    </header>
+
+    {% if messages %}
+      <div style="margin:12px 0;display:grid;gap:8px">
+        {% for message in messages %}
+          <div style="padding:10px 12px;border-radius:12px;border:1px solid #eef2f6;background:#fff;color:var(--text)">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate style="
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      background:#fff;
+      box-shadow: var(--shadow);
+    ">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div style="
+          padding:10px 12px;
+          border-radius:12px;
+          border:1px solid rgba(180,35,24,.25);
+          background: rgba(180,35,24,.06);
+          color: var(--danger);
+          margin-bottom:12px;
+          line-height:1.8;
+        ">
+          {{ form.non_field_errors }}
+        </div>
+      {% endif %}
+
+      <!-- Section: Organization Info -->
+      <section style="padding:14px;border:1px solid #eef4ff;border-radius:16px;background:var(--soft);margin-bottom:12px">
+        <div style="font-weight:900;color:var(--brand);margin-bottom:10px">معلومات الجهة</div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.category.label }}</label>
+            {{ form.category }}
+            {% if form.category.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.category.errors }}</div>{% endif %}
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.org_name.label }}</label>
+            {{ form.org_name }}
+            {% if form.org_name.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.org_name.errors }}</div>{% endif %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Representative -->
+      <section style="padding:14px;border:1px solid #eef4ff;border-radius:16px;background:#fff;margin-bottom:12px">
+        <div style="font-weight:900;color:var(--brand);margin-bottom:10px">بيانات ممثل الجهة</div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.representative_name.label }}</label>
+            {{ form.representative_name }}
+            {% if form.representative_name.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.representative_name.errors }}</div>{% endif %}
+          </div>
+
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.representative_phone.label }}</label>
+            {{ form.representative_phone }}
+            <div style="margin-top:6px;color:var(--muted);font-size:13px">{{ form.representative_phone.help_text }}</div>
+            {% if form.representative_phone.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.representative_phone.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div style="margin-top:12px">
+          <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.email.label }}</label>
+          {{ form.email }}
+          {% if form.email.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.email.errors }}</div>{% endif %}
+        </div>
+      </section>
+
+      <!-- Section: Location -->
+      <section style="padding:14px;border:1px solid #eef4ff;border-radius:16px;background:#fff;margin-bottom:12px">
+        <div style="font-weight:900;color:var(--brand);margin-bottom:10px">موقع الجهة</div>
+
+        <div style="margin-bottom:12px">
+          <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.map_url.label }}</label>
+          {{ form.map_url }}
+          <div style="margin-top:6px;color:var(--muted);font-size:13px">
+            ضع رابط موقع الجهة من خرائط Google/Apple/OSM (يفضل رابط https).
+          </div>
+          {% if form.map_url.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.map_url.errors }}</div>{% endif %}
+        </div>
+
+        <div style="margin-bottom:12px">
+          <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.location_description.label }}</label>
+          {{ form.location_description }}
+          {% if form.location_description.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.location_description.errors }}</div>{% endif %}
+        </div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.latitude.label }}</label>
+            {{ form.latitude }}
+            {% if form.latitude.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.latitude.errors }}</div>{% endif %}
+          </div>
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.longitude.label }}</label>
+            {{ form.longitude }}
+            {% if form.longitude.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.longitude.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <div style="margin-top:10px;color:var(--muted);font-size:13px;line-height:1.8">
+          يكفي إدخال <b>أحد الخيارات</b>: رابط الخريطة أو وصف الموقع أو الإحداثيات.
+        </div>
+      </section>
+
+      <!-- Section: Password -->
+      <section style="padding:14px;border:1px solid #eef4ff;border-radius:16px;background:var(--soft)">
+        <div style="font-weight:900;color:var(--brand);margin-bottom:10px">بيانات الدخول</div>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px">
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.password1.label }}</label>
+            {{ form.password1 }}
+            {% if form.password1.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.password1.errors }}</div>{% endif %}
+          </div>
+          <div>
+            <label style="display:block;margin-bottom:7px;font-weight:800;color:var(--text)">{{ form.password2.label }}</label>
+            {{ form.password2 }}
+            {% if form.password2.errors %}<div style="margin-top:6px;color:var(--danger)">{{ form.password2.errors }}</div>{% endif %}
+          </div>
+        </div>
+
+        <button type="submit" style="
+          margin-top:14px;
+          width:100%;
+          padding:12px 14px;
+          border-radius:14px;
+          border:1px solid rgba(11,61,115,.18);
+          background: linear-gradient(180deg, rgba(11,61,115,.96), rgba(11,61,115,.88));
+          color:#fff;
+          font-weight:900;
+          cursor:pointer;
+          letter-spacing:.2px;
+        ">
+          إنشاء حساب الجهة
+        </button>
+
+        <div style="margin-top:12px;color:var(--muted)">
+          لديك حساب؟ <a href="{% url 'accounts:login' %}" style="color:var(--brand);font-weight:900;text-decoration:none">تسجيل الدخول</a>
+        </div>
+      </section>
+
+    </form>
+  </div>
+</main>
+{% endblock %}

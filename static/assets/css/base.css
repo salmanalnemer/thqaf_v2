@@ -113,13 +113,13 @@ main{
   display:flex;
   align-items:center;
   gap: 10px;
-  color: #9a7522;
+  color: #ffffff;
   font-weight: 900;
   font-size: 13px;
 }
 .topbar .meta i{
   font-size: 16px;
-  color:  #9a7522;
+  color:  #ffffff;
 }
 
 .topbar .mini-actions{

@@ -3,40 +3,131 @@
 {% block title %}تسجيل الدخول | ثقف{% endblock %}
 
 {% block content %}
-<main class="wrap" style="padding:24px 0;max-width:540px">
-  <h1 style="margin:0 0 12px">تسجيل الدخول</h1>
+<main class="wrap" style="padding:28px 0;max-width:560px">
+  <div style="
+    --border:#e7e9ee;
+    --text:#111827;
+    --muted:#6b7280;
+    --bg:#ffffff;
+    --soft:#f7f8fb;
+    --brand:#0f3d5e;
+    --danger:#b42318;
+    --shadow: 0 14px 36px rgba(15, 23, 42, .10);
 
-  {% if messages %}
-    <div style="margin:12px 0">
-      {% for message in messages %}
-        <div style="padding:10px;border-radius:10px;border:1px solid #eee;margin-bottom:8px">
-          {{ message }}
+    background: var(--bg);
+  ">
+    <header style="margin-bottom:14px">
+      <h1 style="margin:0;color:var(--text);font-size:22px;font-weight:900;letter-spacing:.2px">
+        تسجيل الدخول
+      </h1>
+      <div style="margin-top:6px;color:var(--muted);line-height:1.7">
+        ادخل برقم الجوال أو البريد الإلكتروني، ثم الرقم السري.
+      </div>
+    </header>
+
+    {% if messages %}
+      <div style="margin:12px 0;display:grid;gap:8px">
+        {% for message in messages %}
+          <div style="
+            padding:10px 12px;
+            border-radius:12px;
+            border:1px solid var(--border);
+            background: var(--soft);
+            color: var(--text);
+          ">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate style="
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      box-shadow: var(--shadow);
+      background: #fff;
+    ">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div style="
+          margin-bottom:12px;
+          padding:10px 12px;
+          border-radius:12px;
+          border:1px solid rgba(180,35,24,.25);
+          background: rgba(180,35,24,.06);
+          color: var(--danger);
+          line-height:1.7;
+        ">
+          {{ form.non_field_errors }}
         </div>
-      {% endfor %}
+      {% endif %}
+
+      <div style="display:grid;gap:14px">
+        <div>
+          <label for="{{ form.identifier.id_for_label }}" style="display:block;margin-bottom:8px;color:var(--text);font-weight:800">
+            {{ form.identifier.label }}
+          </label>
+          {{ form.identifier }}
+          {% if form.identifier.errors %}
+            <div style="margin-top:6px;color:var(--danger)">{{ form.identifier.errors }}</div>
+          {% endif %}
+          <div style="margin-top:6px;color:var(--muted);font-size:13px">
+            مثال: 05xxxxxxxx أو name@example.com
+          </div>
+        </div>
+
+        <div>
+          <label for="{{ form.password.id_for_label }}" style="display:block;margin-bottom:8px;color:var(--text);font-weight:800">
+            {{ form.password.label }}
+          </label>
+          {{ form.password }}
+          {% if form.password.errors %}
+            <div style="margin-top:6px;color:var(--danger)">{{ form.password.errors }}</div>
+          {% endif %}
+        </div>
+
+        <button type="submit" style="
+          width:100%;
+          padding:12px 14px;
+          border-radius:14px;
+          border:1px solid rgba(15,61,94,.15);
+          background: linear-gradient(180deg, rgba(15,61,94,.95), rgba(15,61,94,.88));
+          color:#fff;
+          font-weight:900;
+          cursor:pointer;
+          letter-spacing:.2px;
+        ">
+          دخول
+        </button>
+
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;color:var(--muted)">
+          <div>
+            ليس لديك حساب؟
+            <a href="{% url 'accounts:register_choice' %}" style="color:var(--brand);font-weight:800;text-decoration:none">
+              إنشاء حساب
+            </a>
+          </div>
+
+          {# ✅ لا نستخدم reverse لمسار غير موجود حتى لا يحدث NoReverseMatch #}
+          <div>
+            {% url 'password_reset' as reset_url %}
+            {% if reset_url %}
+              <a href="{{ reset_url }}" style="color:var(--brand);font-weight:800;text-decoration:none">
+                نسيت كلمة المرور؟
+              </a>
+            {% else %}
+              <span style="opacity:.85">نسيت كلمة المرور؟ (سيتم تفعيلها لاحقًا)</span>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </form>
+
+    <div style="margin-top:14px;color:var(--muted);font-size:12.5px;line-height:1.8">
+      ملاحظة: إذا كان حسابك جديدًا، قد تحتاج لتفعيل البريد الإلكتروني عبر رمز التحقق (OTP).
     </div>
-  {% endif %}
-
-  <form method="post" novalidate style="border:1px solid #eee;border-radius:16px;padding:16px">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
-
-    <div style="display:grid;gap:12px">
-      <div>
-        <label style="display:block;margin-bottom:6px">{{ form.email.label }}</label>
-        {{ form.email }}
-        <div style="color:#b00">{{ form.email.errors }}</div>
-      </div>
-      <div>
-        <label style="display:block;margin-bottom:6px">{{ form.password.label }}</label>
-        {{ form.password }}
-        <div style="color:#b00">{{ form.password.errors }}</div>
-      </div>
-
-      <button type="submit" style="padding:10px 12px;border-radius:12px;border:0;cursor:pointer">دخول</button>
-      <div style="opacity:.8">
-        ليس لديك حساب؟ <a href="{% url 'accounts:register_choice' %}">إنشاء حساب</a>
-      </div>
-    </div>
-  </form>
+  </div>
 </main>
 {% endblock %}

@@ -4,23 +4,35 @@ import logging
 
 from django.contrib import messages
 from django.contrib.auth import login, logout
-from django.shortcuts import render, redirect
-from django.template.loader import render_to_string
-from django.utils import timezone
 from django.core.mail import EmailMultiAlternatives
+from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
+from django.urls import NoReverseMatch, reverse
+from django.utils import timezone
 
 from .forms import (
+    EmailLoginForm,
     IndividualSignupForm,
     OrganizationSignupForm,
     OTPVerifyForm,
-    EmailLoginForm,
 )
-from .models import User, EmailOTP
+from .models import EmailOTP, User
 
 logger = logging.getLogger(__name__)
 
-
 PENDING_USER_SESSION_KEY = "pending_activation_user_id"
+
+
+def _safe_redirect_landing():
+    """
+    تحويل آمن:
+    - إذا عندك URL اسمه landing يرجع له
+    - إذا غير موجود يرجع إلى /
+    """
+    try:
+        return redirect(reverse("landing"))
+    except NoReverseMatch:
+        return redirect("/")
 
 
 def register_choice(request):
@@ -39,12 +51,17 @@ def register_individual(request):
             user = form.save()
             _send_activation_otp(request, user)
             request.session[PENDING_USER_SESSION_KEY] = user.id
-            messages.success(request, "تم إنشاء الحساب ✅ أرسلنا رمز التحقق إلى بريدك.")
+            messages.success(request, "تم إنشاء الحساب ✅ أرسلنا رمز التحقق إلى بريدك الإلكتروني.")
             return redirect("accounts:verify_otp")
         messages.error(request, "تحقق من البيانات المدخلة.")
     else:
         form = IndividualSignupForm()
-    return render(request, "accounts/register_form.html", {"form": form, "title": "تسجيل فرد"})
+
+    return render(
+        request,
+        "accounts/register_individual.html",
+        {"form": form, "title": "تسجيل الأفراد"},
+    )
 
 
 def register_organization(request):
@@ -54,12 +71,17 @@ def register_organization(request):
             user = form.save()
             _send_activation_otp(request, user)
             request.session[PENDING_USER_SESSION_KEY] = user.id
-            messages.success(request, "تم إنشاء حساب الجهة ✅ أرسلنا رمز التحقق إلى بريدك.")
+            messages.success(request, "تم إنشاء حساب الجهة ✅ أرسلنا رمز التحقق إلى بريدك الإلكتروني.")
             return redirect("accounts:verify_otp")
         messages.error(request, "تحقق من البيانات المدخلة.")
     else:
         form = OrganizationSignupForm()
-    return render(request, "accounts/register_form.html", {"form": form, "title": "تسجيل جهة"})
+
+    return render(
+        request,
+        "accounts/register_organization.html",
+        {"form": form, "title": "تسجيل جهة"},
+    )
 
 
 def verify_otp(request):
@@ -79,13 +101,14 @@ def verify_otp(request):
         form = OTPVerifyForm(request.POST)
         if form.is_valid():
             code = form.cleaned_data["code"]
+
             otp = (
                 EmailOTP.objects.filter(user=user, is_used=False)
                 .order_by("-created_at")
                 .first()
             )
             if not otp:
-                messages.error(request, "لا يوجد رمز تحقق صالح. اطلب إعادة إرسال الرمز.")
+                messages.error(request, "لا يوجد رمز تحقق صالح. اضغط إعادة إرسال للحصول على رمز جديد.")
                 return redirect("accounts:verify_otp")
 
             if otp.is_expired():
@@ -102,16 +125,19 @@ def verify_otp(request):
                 messages.error(request, "رمز غير صحيح.")
                 return redirect("accounts:verify_otp")
 
+            # نجاح
             otp.is_used = True
             otp.save(update_fields=["is_used"])
 
             user.is_active = True
-            user.save(update_fields=["is_active", "user_type", "is_staff", "role"])
+            # ملاحظة: لا نرفع is_staff هنا لأن الأفراد/الجهات ليسوا واجهة إدارة
+            user.save(update_fields=["is_active"])
 
             request.session.pop(PENDING_USER_SESSION_KEY, None)
             login(request, user)
             messages.success(request, "تم تفعيل الحساب بنجاح 🎉")
-            return redirect("landing")
+            return _safe_redirect_landing()
+
         messages.error(request, "تحقق من رمز التفعيل.")
     else:
         form = OTPVerifyForm()
@@ -121,8 +147,7 @@ def verify_otp(request):
 
 def resend_otp(request):
     """إعادة إرسال رمز التفعيل للحساب المعلق في الجلسة.
-
-    حِماية بسيطة: حد أدنى 60 ثانية بين كل إرسال.
+    حماية بسيطة: حد أدنى 60 ثانية بين كل إرسال.
     """
     user_id = request.session.get(PENDING_USER_SESSION_KEY)
     if not user_id:
@@ -145,7 +170,7 @@ def resend_otp(request):
 
     _send_activation_otp(request, user)
     request.session[cooldown_key] = now_ts
-    messages.success(request, "تم إرسال رمز جديد إلى بريدك.")
+    messages.success(request, "تم إرسال رمز جديد إلى بريدك الإلكتروني.")
     return redirect("accounts:verify_otp")
 
 
@@ -156,23 +181,25 @@ def login_view(request):
             user = form.cleaned_data["user"]
             login(request, user)
             messages.success(request, "تم تسجيل الدخول ✅")
-            return redirect("landing")
+            return _safe_redirect_landing()
         messages.error(request, "تحقق من بيانات الدخول.")
     else:
         form = EmailLoginForm()
+
     return render(request, "accounts/login.html", {"form": form})
 
 
 def logout_view(request):
     logout(request)
     messages.success(request, "تم تسجيل الخروج.")
-    return redirect("landing")
+    return _safe_redirect_landing()
 
 
 def _send_activation_otp(request, user: User):
     """إرسال OTP التفعيل عبر البريد مع تسجيل الأخطاء."""
     try:
         otp = EmailOTP.create_for_user(user)
+
         ctx = {
             "user": user,
             "code": otp.code,
@@ -190,6 +217,7 @@ def _send_activation_otp(request, user: User):
         )
         email.attach_alternative(html_body, "text/html")
         email.send(fail_silently=False)
+
     except Exception:
         logger.exception("Failed to send activation OTP")
-        messages.warning(request, "تم إنشاء الحساب ✅ لكن تعذر إرسال رمز التفعيل حاليًا.")
+        messages.warning(request, "تم إنشاء الحساب ✅ لكن تعذر إرسال رمز التفعيل حاليًا. جرّب إعادة الإرسال.")

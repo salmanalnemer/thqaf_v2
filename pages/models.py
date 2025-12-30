@@ -36,7 +36,7 @@ class SiteSetting(models.Model):
 
     class Meta:
         verbose_name = "إعدادات الموقع"
-        verbose_name_plural = "إعدادات الموقع"
+        verbose_name_plural = "بريد وصول رسائل التواصل"
 
     def __str__(self) -> str:
         return f"إيميل الاستقبال: {self.contact_inbox_email}"

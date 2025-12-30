@@ -3,34 +3,182 @@
 {% block title %}تفعيل الحساب | ثقف{% endblock %}
 
 {% block content %}
-<main class="wrap" style="padding:24px 0;max-width:540px">
-  <h1 style="margin:0 0 12px">تفعيل الحساب</h1>
-  <p style="margin:0 0 18px;opacity:.85">أرسلنا رمز تحقق إلى: <strong>{{ user.email }}</strong></p>
+<main class="wrap" style="padding:26px 0;max-width:640px">
 
-  {% if messages %}
-    <div style="margin:12px 0">
-      {% for message in messages %}
-        <div style="padding:10px;border-radius:10px;border:1px solid #eee;margin-bottom:8px">
-          {{ message }}
+  <div style="
+    --brand:#0f3d5e;
+    --text:#0f172a;
+    --muted:#667085;
+    --border:#e7e9ee;
+    --soft:#f7f8fb;
+    --danger:#b42318;
+    --ok:#067647;
+    --shadow: 0 14px 34px rgba(15, 23, 42, .10);
+  ">
+
+    <header style="margin-bottom:14px">
+      <h1 style="margin:0;font-size:22px;font-weight:900;color:var(--text);letter-spacing:.2px">
+        تفعيل الحساب
+      </h1>
+      <div style="margin-top:6px;color:var(--muted);line-height:1.8">
+        أرسلنا رمز تحقق إلى: <b dir="ltr">{{ user.email }}</b>
+      </div>
+    </header>
+
+    {% if messages %}
+      <div style="margin:12px 0;display:grid;gap:8px">
+        {% for message in messages %}
+          <div style="
+            padding:10px 12px;
+            border-radius:12px;
+            border:1px solid var(--border);
+            background: var(--soft);
+            color: var(--text);
+            line-height:1.7;
+          ">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <form method="post" novalidate style="
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:18px;
+      background:#fff;
+      box-shadow: var(--shadow);
+    ">
+      {% csrf_token %}
+
+      {% if form.non_field_errors %}
+        <div style="
+          margin-bottom:12px;
+          padding:10px 12px;
+          border-radius:12px;
+          border:1px solid rgba(180,35,24,.25);
+          background: rgba(180,35,24,.06);
+          color: var(--danger);
+          line-height:1.7;
+        ">
+          {{ form.non_field_errors }}
         </div>
-      {% endfor %}
-    </div>
-  {% endif %}
+      {% endif %}
 
-  <form method="post" novalidate style="border:1px solid #eee;border-radius:16px;padding:16px">
-    {% csrf_token %}
-    {{ form.non_field_errors }}
+      <section style="padding:14px;border:1px solid #eef2f6;border-radius:16px;background:#fff">
+        <div style="font-weight:900;color:var(--brand);margin-bottom:10px">إدخال رمز التحقق</div>
 
-    <div>
-      <label style="display:block;margin-bottom:6px">{{ form.code.label }}</label>
-      {{ form.code }}
-      <div style="color:#b00">{{ form.code.errors }}</div>
-    </div>
+        <div>
+          <label style="display:block;margin-bottom:8px;font-weight:800;color:var(--text)">
+            {{ form.code.label }}
+          </label>
+          {{ form.code }}
+          {% if form.code.errors %}
+            <div style="margin-top:6px;color:var(--danger)">{{ form.code.errors }}</div>
+          {% endif %}
+          <div style="margin-top:6px;color:var(--muted);font-size:13px">
+            أدخل الرمز المكون من 6 أرقام (قد يصل خلال دقيقة).
+          </div>
+        </div>
 
-    <div style="display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap">
-      <button type="submit" style="padding:10px 12px;border-radius:12px;border:0;cursor:pointer">تفعيل</button>
-      <a href="{% url 'accounts:resend_otp' %}" style="text-decoration:none">إعادة إرسال الرمز</a>
-    </div>
-  </form>
+        <button type="submit" style="
+          margin-top:14px;
+          width:100%;
+          padding:12px 14px;
+          border-radius:14px;
+          border:1px solid rgba(15,61,94,.18);
+          background: linear-gradient(180deg, rgba(15,61,94,.96), rgba(15,61,94,.88));
+          color:#fff;
+          font-weight:900;
+          cursor:pointer;
+          letter-spacing:.2px;
+        ">
+          تفعيل
+        </button>
+
+        <div style="
+          margin-top:12px;
+          display:flex;
+          gap:10px;
+          justify-content:space-between;
+          align-items:center;
+          flex-wrap:wrap;
+          color:var(--muted)
+        ">
+          <div id="hint" style="font-size:13px;line-height:1.7">
+            لم يصلك الرمز؟
+          </div>
+
+          <a id="resendLink"
+             href="{% url 'accounts:resend_otp' %}"
+             style="text-decoration:none;color:var(--brand);font-weight:900"
+             aria-disabled="false">
+            إعادة إرسال الرمز
+          </a>
+        </div>
+
+        <div id="cooldownBox" style="
+          display:none;
+          margin-top:10px;
+          padding:10px 12px;
+          border-radius:12px;
+          border:1px solid #eef2f6;
+          background: var(--soft);
+          color: var(--muted);
+          font-size:13px;
+          line-height:1.7;
+        ">
+          يمكنك إعادة الإرسال بعد <b id="cooldownSec" dir="ltr">60</b> ثانية.
+        </div>
+      </section>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      // UI cooldown only (server-side cooldown موجود في view)
+      var COOLDOWN_SECONDS = 60;
+      var key = "thqaf_otp_resend_cooldown_until";
+      var now = Date.now();
+      var until = parseInt(localStorage.getItem(key) || "0", 10);
+
+      var resendLink = document.getElementById("resendLink");
+      var cooldownBox = document.getElementById("cooldownBox");
+      var cooldownSec = document.getElementById("cooldownSec");
+
+      function setDisabled(disabled) {
+        if (!resendLink) return;
+        resendLink.style.pointerEvents = disabled ? "none" : "auto";
+        resendLink.style.opacity = disabled ? "0.55" : "1";
+        resendLink.setAttribute("aria-disabled", disabled ? "true" : "false");
+      }
+
+      function tick() {
+        var msLeft = until - Date.now();
+        if (msLeft <= 0) {
+          setDisabled(false);
+          if (cooldownBox) cooldownBox.style.display = "none";
+          return;
+        }
+        var secLeft = Math.ceil(msLeft / 1000);
+        setDisabled(true);
+        if (cooldownBox) cooldownBox.style.display = "block";
+        if (cooldownSec) cooldownSec.textContent = String(secLeft);
+        window.setTimeout(tick, 250);
+      }
+
+      if (until > now) {
+        tick();
+      }
+
+      if (resendLink) {
+        resendLink.addEventListener("click", function () {
+          // set cooldown when user clicks resend
+          var newUntil = Date.now() + (COOLDOWN_SECONDS * 1000);
+          localStorage.setItem(key, String(newUntil));
+        });
+      }
+    })();
+  </script>
 </main>
 {% endblock %}

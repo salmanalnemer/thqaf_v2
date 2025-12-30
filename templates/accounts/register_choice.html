@@ -5,63 +5,37 @@
 {% block content %}
 <main class="wrap" style="padding: 24px 0">
   <h1 style="margin:0 0 12px">إنشاء حساب</h1>
+  <p style="margin:0 0 18px;opacity:.85">
+    اختر نوع الحساب. <strong>ملاحظة:</strong> حسابات (مدرب، مدير إدارة، مشرف، منسق دورات) يتم إنشاؤها من مدير النظام فقط.
+  </p>
 
-  <!-- Styles inside a single DIV (as requested) -->
   <div style="
-    --ind-bg: #f3e6d8;
-    --ind-border: #c9a680;
-    --ind-title: #5a3a1e;
-    --ind-text: #6b4a2c;
-
-    --org-bg: #eaf4ff;
-    --org-border: #9cc7ff;
-    --org-title: #0b3d73;
-    --org-text: #1b5aa6;
-
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-    gap:12px
+    --ind-bg:#f3e6d8; --ind-border:#c9a680; --ind-title:#5a3a1e; --ind-text:#6b4a2c;
+    --org-bg:#eaf4ff; --org-border:#9cc7ff; --org-title:#0b3d73; --org-text:#1b5aa6;
+    display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px
   ">
-    <!-- Individual card (Brown) -->
     <a href="{% url 'accounts:register_individual' %}" style="
-      text-decoration:none;
-      display:block;
-      padding:16px;
-      border:1px solid var(--ind-border);
-      border-radius:14px;
-      background: var(--ind-bg);
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      box-shadow: 0 6px 18px rgba(90,58,30,.08);
-      color: inherit;
+      text-decoration:none;display:block;padding:16px;border:1px solid var(--ind-border);
+      border-radius:14px;background:var(--ind-bg);color:inherit;
+      transition:transform .12s ease, box-shadow .12s ease;
+      box-shadow:0 6px 18px rgba(90,58,30,.08)
     "
-    onmouseover="this.style.transform='translateY(-2px)';this.style.filter='brightness(0.99)';this.style.boxShadow='0 10px 26px rgba(90,58,30,.14)'"
-    onmouseout="this.style.transform='none';this.style.filter='none';this.style.boxShadow='0 6px 18px rgba(90,58,30,.08)'"
-    >
+    onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 26px rgba(90,58,30,.14)'"
+    onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 18px rgba(90,58,30,.08)'">
       <div style="font-weight:800;font-size:16px;color:var(--ind-title)">تسجيل فرد</div>
-      <div style="opacity:.95;margin-top:6px;line-height:1.6;color:var(--ind-text)">
-        حساب للأفراد للتسجيل في الدورات.
-      </div>
+      <div style="opacity:.95;margin-top:6px;line-height:1.6;color:var(--ind-text)">حساب للأفراد للتسجيل في الدورات.</div>
     </a>
 
-    <!-- Organization card (Light blue) -->
     <a href="{% url 'accounts:register_organization' %}" style="
-      text-decoration:none;
-      display:block;
-      padding:16px;
-      border:1px solid var(--org-border);
-      border-radius:14px;
-      background: var(--org-bg);
-      transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
-      box-shadow: 0 6px 18px rgba(11,61,115,.08);
-      color: inherit;
+      text-decoration:none;display:block;padding:16px;border:1px solid var(--org-border);
+      border-radius:14px;background:var(--org-bg);color:inherit;
+      transition:transform .12s ease, box-shadow .12s ease;
+      box-shadow:0 6px 18px rgba(11,61,115,.08)
     "
-    onmouseover="this.style.transform='translateY(-2px)';this.style.filter='brightness(0.99)';this.style.boxShadow='0 10px 26px rgba(11,61,115,.14)'"
-    onmouseout="this.style.transform='none';this.style.filter='none';this.style.boxShadow='0 6px 18px rgba(11,61,115,.08)'"
-    >
+    onmouseover="this.style.transform='translateY(-2px)';this.style.boxShadow='0 10px 26px rgba(11,61,115,.14)'"
+    onmouseout="this.style.transform='none';this.style.boxShadow='0 6px 18px rgba(11,61,115,.08)'">
       <div style="font-weight:800;font-size:16px;color:var(--org-title)">تسجيل جهة</div>
-      <div style="opacity:.95;margin-top:6px;line-height:1.6;color:var(--org-text)">
-        حساب للجهات لإدارة الدورات والشهادات الخاصةبموضفي الجهة.
-      </div>
+      <div style="opacity:.95;margin-top:6px;line-height:1.6;color:var(--org-text)">حساب للجهات لطلب/اعتماد الدورات.</div>
     </a>
   </div>
 </main>
