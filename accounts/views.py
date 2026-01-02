@@ -16,7 +16,7 @@ from .forms import (
     OrganizationSignupForm,
     OTPVerifyForm,
 )
-from .models import EmailOTP, User
+from .models import EmailOTP, Role, User
 
 logger = logging.getLogger(__name__)
 
@@ -33,6 +33,30 @@ def _safe_redirect_landing():
         return redirect(reverse("landing"))
     except NoReverseMatch:
         return redirect("/")
+
+
+def _safe_redirect_individual_dashboard():
+    """
+    تحويل آمن لداشبورد الأفراد:
+    - إذا عندك URL اسمه individuals:dashboard يرجع له
+    - إذا غير موجود يرجع للرئيسية
+    """
+    try:
+        return redirect(reverse("individuals:dashboard"))
+    except NoReverseMatch:
+        return _safe_redirect_landing()
+
+
+def _safe_redirect_organization_dashboard():
+    """
+    تحويل آمن لداشبورد الجهات:
+    - إذا عندك URL اسمه organizations:dashboard يرجع له
+    - إذا غير موجود يرجع للرئيسية
+    """
+    try:
+        return redirect(reverse("organizations:dashboard"))
+    except NoReverseMatch:
+        return _safe_redirect_landing()
 
 
 def register_choice(request):
@@ -135,7 +159,16 @@ def verify_otp(request):
 
             request.session.pop(PENDING_USER_SESSION_KEY, None)
             login(request, user)
-            messages.success(request, "تم تفعيل الحساب بنجاح 🎉")
+
+            display_name = (getattr(user, "full_name", "") or "").strip() or user.email
+            messages.success(request, f"تم تفعيل الحساب بنجاح 🎉 أهلاً {display_name}")
+
+            # ✅ توجيه حسب الدور
+            if getattr(user, "role", None) == Role.IND:
+                return _safe_redirect_individual_dashboard()
+            if getattr(user, "role", None) == Role.ORG:
+                return _safe_redirect_organization_dashboard()
+
             return _safe_redirect_landing()
 
         messages.error(request, "تحقق من رمز التفعيل.")
@@ -178,10 +211,30 @@ def login_view(request):
     if request.method == "POST":
         form = EmailLoginForm(request.POST)
         if form.is_valid():
-            user = form.cleaned_data["user"]
+            # ✅ حل KeyError بشكل آمن + يدعم get_user() إن وجد
+            user = None
+            if hasattr(form, "get_user"):
+                user = form.get_user()
+            if user is None:
+                user = form.cleaned_data.get("user")
+
+            if user is None:
+                messages.error(request, "تعذر تسجيل الدخول. تحقق من البيانات وحاول مرة أخرى.")
+                return render(request, "accounts/login.html", {"form": form})
+
             login(request, user)
-            messages.success(request, "تم تسجيل الدخول ✅")
+
+            display_name = (getattr(user, "full_name", "") or "").strip() or user.email
+            messages.success(request, f"مرحباً {display_name} 👋 تم تسجيل الدخول بنجاح ✅")
+
+            # ✅ توجيه حسب الدور
+            if getattr(user, "role", None) == Role.IND:
+                return _safe_redirect_individual_dashboard()
+            if getattr(user, "role", None) == Role.ORG:
+                return _safe_redirect_organization_dashboard()
+
             return _safe_redirect_landing()
+
         messages.error(request, "تحقق من بيانات الدخول.")
     else:
         form = EmailLoginForm()

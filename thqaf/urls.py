@@ -16,7 +16,6 @@ urlpatterns = [
 
     # مسارات الحسابات والتطبيقات
     path("accounts/", include("accounts.urls")),
-    path("org/", include("organizations.urls")),
     path("individuals/", include("individuals.urls")),
 ]
 

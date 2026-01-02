@@ -65,7 +65,13 @@ class BaseSignupForm(forms.Form):
             else:
                 _style_input(field)
 
-        _style_input(self.fields["email"], placeholder="name@example.com", ltr=True, inputmode="email", autocomplete="email")
+        _style_input(
+            self.fields["email"],
+            placeholder="name@example.com",
+            ltr=True,
+            inputmode="email",
+            autocomplete="email",
+        )
 
     def clean_email(self):
         email = (self.cleaned_data.get("email") or "").strip().lower()
@@ -109,7 +115,6 @@ class IndividualSignupForm(BaseSignupForm):
         phone = (self.cleaned_data.get("phone") or "").strip()
         if not phone.isdigit() or len(phone) != 10:
             raise ValidationError("رقم الجوال يجب أن يكون 10 أرقام فقط.")
-        # منع تكرار رقم الجوال (مهم للدخول بالجوال لاحقًا)
         if User.objects.filter(phone=phone).exists():
             raise ValidationError("رقم الجوال مستخدم مسبقًا.")
         return phone
@@ -171,7 +176,6 @@ class OrganizationSignupForm(BaseSignupForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # تحسينات عرض للحقول
         _style_input(self.fields["org_name"], placeholder="مثال: شركة / إدارة / جامعة ...")
         _style_input(self.fields["representative_name"], placeholder="اسم ممثل الجهة")
         _style_input(self.fields["representative_phone"], placeholder="05xxxxxxxx", ltr=True, inputmode="numeric", autocomplete="tel")
@@ -179,13 +183,11 @@ class OrganizationSignupForm(BaseSignupForm):
         _style_input(self.fields["latitude"], placeholder="مثال: 27.511234", ltr=True, inputmode="decimal", autocomplete="off")
         _style_input(self.fields["longitude"], placeholder="مثال: 41.720123", ltr=True, inputmode="decimal", autocomplete="off")
 
-        # select
         self.fields["category"].widget.attrs.setdefault(
             "style",
             "width:100%;padding:12px 12px;border:1px solid #e4e7ec;border-radius:14px;outline:none;background:#fff",
         )
 
-        # textarea
         self.fields["location_description"].widget.attrs.setdefault(
             "style",
             "width:100%;padding:12px 12px;border:1px solid #e4e7ec;border-radius:14px;outline:none;background:#fff",
@@ -195,7 +197,6 @@ class OrganizationSignupForm(BaseSignupForm):
         phone = (self.cleaned_data.get("representative_phone") or "").strip()
         if not phone.isdigit() or len(phone) != 10:
             raise ValidationError("رقم الجوال يجب أن يكون 10 أرقام فقط.")
-        # نخزن جوال ممثل الجهة في User.phone → لازم يكون فريد
         if User.objects.filter(phone=phone).exists():
             raise ValidationError("رقم الجوال مستخدم مسبقًا.")
         return phone
@@ -214,16 +215,13 @@ class OrganizationSignupForm(BaseSignupForm):
         map_url = (cleaned.get("map_url") or "").strip()
         desc = (cleaned.get("location_description") or "").strip()
 
-        # إما كلاهما معًا أو فارغين
         if (lat is None) ^ (lng is None):
             raise ValidationError("يرجى إدخال خط العرض وخط الطول معًا أو تركهما فارغين.")
 
-        # إلزام معلومة موقع واحدة على الأقل (حسب متطلبك)
         has_coords = (lat is not None and lng is not None)
         if not map_url and not desc and not has_coords:
             raise ValidationError("يرجى إدخال رابط الخريطة أو وصف الموقع أو الإحداثيات.")
 
-        # منع تكرار اسم الجهة (حسّاس للحالة)
         OrganizationProfile = apps.get_model("organizations", "OrganizationProfile")
         org_name = (cleaned.get("org_name") or "").strip()
         if org_name and OrganizationProfile.objects.filter(org_name__iexact=org_name).exists():
@@ -234,7 +232,6 @@ class OrganizationSignupForm(BaseSignupForm):
     def save(self) -> User:
         data = self.cleaned_data
 
-        # نخزن phone في User كجوال ممثل الجهة لتسهيل التواصل/الدخول لاحقًا
         user = User.objects.create_user(
             email=data["email"],
             password=data["password1"],
@@ -278,7 +275,8 @@ class EmailLoginForm(forms.Form):
     ✅ تسجيل دخول رسمي:
     - حقل واحد: رقم الجوال أو البريد الإلكتروني (identifier)
     - كلمة مرور
-    ملاحظة: أبقينا اسم الكلاس EmailLoginForm حتى لا نغير views.py
+    - يتحقق من صحة البيانات + تفعيل الحساب
+    - لا يقيّد الدور هنا (التوجيه حسب الدور يتم في views.py)
     """
 
     identifier = forms.CharField(label="رقم الجوال أو البريد الإلكتروني", max_length=255)
@@ -301,35 +299,40 @@ class EmailLoginForm(forms.Form):
             autocomplete="current-password",
         )
 
+        self._user: User | None = None
+
+    def get_user(self) -> User | None:
+        return self._user
+
     def clean(self):
         cleaned = super().clean()
-        identifier = (cleaned.get("identifier") or "").strip().lower()
-        password = cleaned.get("password")
+        identifier = (cleaned.get("identifier") or "").strip()
+        password = cleaned.get("password") or ""
 
         if not identifier or not password:
-            raise ValidationError("يرجى إدخال بيانات الدخول.")
+            raise ValidationError("الرجاء إدخال بيانات الدخول كاملة.")
 
-        # بريد إلكتروني
+        # بريد
         if "@" in identifier:
-            user = authenticate(email=identifier, password=password)
-            if user is None:
+            user = User.objects.filter(email__iexact=identifier).first()
+            if not user or not user.check_password(password):
                 raise ValidationError("بيانات الدخول غير صحيحة.")
             if not user.is_active:
                 raise ValidationError("الحساب غير مفعل. يرجى تفعيل الحساب عبر رمز التحقق.")
+            self._user = user
             cleaned["user"] = user
             return cleaned
 
-        # رقم جوال
+        # جوال (10 أرقام)
         if not identifier.isdigit() or len(identifier) != 10:
             raise ValidationError("أدخل بريدًا صحيحًا أو رقم جوال من 10 أرقام.")
 
         user = User.objects.filter(phone=identifier).first()
-        if not user:
-            raise ValidationError("بيانات الدخول غير صحيحة.")
-        if not user.check_password(password):
+        if not user or not user.check_password(password):
             raise ValidationError("بيانات الدخول غير صحيحة.")
         if not user.is_active:
             raise ValidationError("الحساب غير مفعل. يرجى تفعيل الحساب عبر رمز التحقق.")
 
+        self._user = user
         cleaned["user"] = user
         return cleaned

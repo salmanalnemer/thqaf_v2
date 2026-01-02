@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}لوحة الفرد | ثقف{% endblock %}
+{% block body_page %}individual-dashboard{% endblock %}
+
+{% block content %}
+<section style="padding:18px 0">
+  <div class="wrap">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+      <div>
+        <p style="margin:8px 0 0;color:rgba(0,0,0,.65);font-weight:700">
+          مرحباً {{ request.user.full_name|default:request.user.email }}
+        </p>
+      </div>
+
+      <a href="{% url 'public_courses' %}" class="link" style="border:1px solid rgba(0,0,0,.08);border-radius:14px;padding:10px 12px;">
+        <i class="ti ti-category" aria-hidden="true"></i>
+        <span>تصفح الدورات</span>
+      </a>
+    </div>
+
+    <div style="margin-top:18px;display:grid;grid-template-columns:repeat(12,1fr);gap:14px">
+      <!-- كرت الدورات -->
+      <div style="grid-column:span 6;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:18px;padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-weight:900">عدد الدورات المسجل بها</div>
+            <div style="margin-top:10px;font-size:34px;font-weight:900">{{ courses_count }}</div>
+          </div>
+          <div style="width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:rgba(19,65,129,.08);border:1px solid rgba(19,65,129,.14)">
+            <i class="ti ti-book" style="font-size:26px;color:#134181"></i>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;color:rgba(0,0,0,.65);font-weight:700">
+          تعرض إجمالي الدورات المرتبطة بحسابك فقط.
+        </div>
+      </div>
+
+      <!-- كرت الشهادات -->
+      <div style="grid-column:span 6;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:18px;padding:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div>
+            <div style="font-weight:900">عدد الشهادات الخاصة بك</div>
+            <div style="margin-top:10px;font-size:34px;font-weight:900">{{ certificates_count }}</div>
+          </div>
+          <div style="width:56px;height:56px;border-radius:16px;display:grid;place-items:center;background:rgba(22,163,74,.08);border:1px solid rgba(22,163,74,.14)">
+            <i class="ti ti-certificate" style="font-size:26px;color:#16a34a"></i>
+          </div>
+        </div>
+
+        <div style="margin-top:14px;color:rgba(0,0,0,.65);font-weight:700">
+          تعرض الشهادات الصادرة باسمك فقط.
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top:16px;background:#fff;border:1px solid rgba(0,0,0,.08);border-radius:18px;padding:16px">
+      <div style="font-weight:900;margin-bottom:8px">اختصارات</div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap">
+        <a class="link" href="{% url 'public_courses' %}"><i class="ti ti-search"></i> استعراض الدورات</a>
+        <a class="link" href="{% url 'contact' %}"><i class="ti ti-mail"></i> تواصل معنا</a>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<style>
+  /* Responsive سريع بدون ما نلمس base.css */
+  @media (max-width: 900px){
+    section .wrap { padding: 0 14px; }
+    section [style*="grid-template-columns"] > div { grid-column: span 12 !important; }
+  }
+</style>
+{% endblock %}

@@ -14,8 +14,6 @@ id_number_validator = RegexValidator(
 
 
 class IndividualProfile(models.Model):
-    """بيانات إضافية للأفراد."""
-
     user = models.OneToOneField(
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,

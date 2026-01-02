@@ -31,7 +31,7 @@
     <header class="header" aria-label="هيدر الموقع">
       <!-- شريط علوي رسمي -->
       <div class="topbar" aria-label="شريط معلومات علوي">
-        
+
       <!-- القوائم -->
       <nav class="nav" aria-label="القائمة الرئيسية">
         <div class="wrap">
@@ -45,7 +45,7 @@
                 <span id="liveTime" aria-live="polite">الوقت الآن —</span>
               </span>
             </div>
-            
+
               <a class="link"
                  href="{% url 'landing' %}" title="الصفحة الرئيسية" data-page="home">
                 <i class="ti ti-home" aria-hidden="true"></i>
@@ -57,21 +57,78 @@
                 <i class="ti ti-category" aria-hidden="true"></i>
                 <span>الدورات والمبادرات</span>
               </a>
-           
 
-             <a class="link"
-                 href="{% url 'accounts:login' %}" data-page="login">
-                <i class="ti ti-mail" aria-hidden="true"></i>
-                <span>بوابة الدخول الموحد</span>
-              </a>
-               <div class="mini-actions">
-              
-              <a class="link"
-                 href="{% url 'accounts:register_choice' %}" data-page="register">
-                <i class="ti ti-mail" aria-hidden="true"></i>
-                <span>إنشاء حساب</span>
-              </a>
-              <!-- الدورات التدريبية (Dropdown) 
+              <!-- ✅ (مطلوب) إظهار بوابة الدخول الموحد/إنشاء حساب للزائر فقط -->
+              {% if request.user.is_authenticated %}
+
+                <!-- ✅ (مطلوب) إظهار الدعم الفني فقط بعد تسجيل الدخول -->
+                <div class="dropdown" id="supportDropdown">
+                  <button
+                    class="dropbtn"
+                    id="supportBtn"
+                    type="button"
+                    aria-controls="supportMenu"
+                    aria-expanded="false"
+                  >
+                    <i class="ti ti-headset" aria-hidden="true"></i>
+                    <span>الدعم الفني</span>
+                    <i class="ti ti-chevron-down" aria-hidden="true"></i>
+                  </button>
+
+                  <div class="dropdown-menu" id="supportMenu" role="menu" aria-label="قائمة الدعم الفني">
+                    <a class="dropdown-item" href="#" role="menuitem">
+                      <i class="ti ti-message-circle" aria-hidden="true"></i>
+                      <span>طلب دعم فني</span>
+                    </a>
+
+                    <a class="dropdown-item" href="#" role="menuitem">
+                      <i class="ti ti-list-details" aria-hidden="true"></i>
+                      <span>طلباتي</span>
+                    </a>
+
+                    <a class="dropdown-item" href="#" role="menuitem">
+                      <i class="ti ti-alert-circle" aria-hidden="true"></i>
+                      <span>البلاغات المفتوحة</span>
+                    </a>
+
+                    <a class="dropdown-item" href="#" role="menuitem">
+                      <i class="ti ti-circle-check" aria-hidden="true"></i>
+                      <span>البلاغات المغلقة</span>
+                    </a>
+
+                    <a class="dropdown-item" href="#" role="menuitem">
+                      <i class="ti ti-arrow-up-right-circle" aria-hidden="true"></i>
+                      <span>تصعيد عطل فني</span>
+                    </a>
+                  </div>
+                </div>
+
+               
+
+                <a class="link" href="{% url 'accounts:logout' %}">
+                  <i class="ti ti-logout" aria-hidden="true"></i>
+                  <span>تسجيل خروج</span>
+                </a>
+
+              {% else %}
+
+                <a class="link"
+                   href="{% url 'accounts:login' %}" data-page="login">
+                  <i class="ti ti-mail" aria-hidden="true"></i>
+                  <span>بوابة الدخول الموحد</span>
+                </a>
+
+                <div class="mini-actions">
+
+                  <a class="link"
+                     href="{% url 'accounts:register_choice' %}" data-page="register">
+                    <i class="ti ti-mail" aria-hidden="true"></i>
+                    <span>إنشاء حساب</span>
+                  </a>
+
+              {% endif %}
+
+              <!-- الدورات التدريبية (Dropdown)
               <div class="dropdown" id="coursesDropdown">
                 <button
                   class="dropbtn"
@@ -167,8 +224,9 @@
                   
                 </div>
               </div>-->
+
                <div class="mini-actions">
-              
+
               <a class="link {% if request.path|slice:':9' == '/contact/' %}active{% endif %}"
                  href="{% url 'contact' %}" data-page="contact">
                 <i class="ti ti-mail" aria-hidden="true"></i>
@@ -181,11 +239,6 @@
       <!-- الشريط العلوي المعلوماتي -->
         <div class="wrap">
           <div class="row">
-            
-
-            
-              
-             
               <!--<button
                 class="mini-btn"
                 type="button"
@@ -196,7 +249,6 @@
                 العربية
               </button>-->
             </div>
-          
         </div>
       </div>
 
@@ -236,8 +288,6 @@
               />
             </div>
 
-            
-
             <button
               class="hamburger"
               id="hamburger"
@@ -248,11 +298,43 @@
             >
               ☰
             </button>
+             <!-- ✅ (مطلوب) إظهار اسم المستخدم من الجلسة + تسجيل خروج -->
+            {% if request.user.is_authenticated %}
+              <span class="link" style="pointer-events:none;">
+                <i class="ti ti-user" aria-hidden="true"></i>
+                <span>مرحباً، {{ request.user.full_name|default:request.user.get_username }}</span>
+              </span>
+            {% endif %}
+
           </div>
+          
         </div>
+        
       </div>
 
     </header>
+
+    <!-- ✅ (مطلوب) رسالة ترحيبية/نجاح بعد تسجيل الدخول (messages) -->
+    {% if messages %}
+  <div class="wrap" style="margin-top:10px;">
+    {% for message in messages %}
+      <div class="flash-msg"
+           data-autohide="1"
+           data-hide-ms="3500"
+           style="
+            padding:12px 14px;
+            border-radius:14px;
+            border:1px solid rgba(19,65,129,.18);
+            background: rgba(19,65,129,.06);
+            font-weight:800;
+            transition: opacity .35s ease, transform .35s ease;
+           ">
+        {{ message }}
+      </div>
+    {% endfor %}
+  </div>
+{% endif %}
+
 
     <!-- ✅ مودل تسجيل دخول الإدارة -->
     <div class="admin-modal-overlay" id="adminModal" aria-hidden="true">
@@ -324,26 +406,6 @@
               <button class="s-footer__icon" type="button" aria-label="تحويل النص إلى صوت"><i class="ti ti-microphone-2"></i></button>
               <button class="s-footer__icon" type="button" aria-label="إمكانية الوصول"><i class="ti ti-wheelchair"></i></button>
             </div>
-
-            <!--<h3 class="s-footer__title s-footer__mt">حمّل تطبيقات الجوال</h3>
-            <div class="s-footer__divider"></div>
-
-            <div class="s-footer__stores" aria-label="متاجر التطبيقات">
-              <a class="s-footer__store" href="#" aria-label="Google Play">
-                <i class="ti ti-brand-google-play"></i>
-                <span>
-                  <small>تحميل من</small>
-                  <b>Google Play</b>
-                </span>
-              </a>
-              <a class="s-footer__store" href="#" aria-label="App Store">
-                <i class="ti ti-brand-apple"></i>
-                <span>
-                  <small>تحميل من</small>
-                  <b>App Store</b>
-                </span>
-              </a>
-            </div>-->
           </section>
 
           <section class="s-footer__col" aria-label="روابط مهمة">
@@ -423,4 +485,26 @@
     <script src="{% static 'assets/js/base.js' %}" defer></script>
     {% block extra_js %}{% endblock %}
   </body>
+
+  <script>
+  (function () {
+    function hideEl(el){
+      el.style.opacity = "0";
+      el.style.transform = "translateY(-6px)";
+      window.setTimeout(function () {
+        if (el && el.parentNode) el.parentNode.removeChild(el);
+      }, 380);
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      var msgs = document.querySelectorAll(".flash-msg[data-autohide='1']");
+      msgs.forEach(function (el) {
+        var ms = parseInt(el.getAttribute("data-hide-ms") || "3500", 10);
+        if (!Number.isFinite(ms) || ms < 800) ms = 3500;
+        window.setTimeout(function () { hideEl(el); }, ms);
+      });
+    });
+  })();
+</script>
+
 </html>

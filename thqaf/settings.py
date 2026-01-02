@@ -89,7 +89,6 @@ INSTALLED_APPS = [
 
     # تطبيقات المشروع
     "accounts.apps.AccountsConfig",
-    "organizations.apps.OrganizationsConfig" if (BASE_DIR / "organizations" / "apps.py").exists() else "organizations",
     "individuals.apps.IndividualsConfig" if (BASE_DIR / "individuals" / "apps.py").exists() else "individuals",
     "pages.apps.PagesConfig",
 ]

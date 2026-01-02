@@ -35,16 +35,16 @@ button, input{ font-family:inherit; }
    Theme
 ------------------------- */
 :root{
-  --brand-950:#061423;
-  --brand-900:#081a2d;
-  --brand-850:#09233d;
-  --brand-800:#0b2a4a;
+  --brand-950:#230606;
+  --brand-900:#bf1313;
+  --brand-850:#3d0909;
+  --brand-800:#bf1313;
   --brand-700:#103a63;
 
-  --gold-700:#9a7522;
+  --gold-700:#b8b4f4;
   --gold-600:#b58a2a;
 
-  --ink-950:#0b1220;
+  --ink-950:#200b0b;
   --ink-800:#1f2937;
   --ink-700:#334155;
   --ink-600:#475569;
@@ -159,7 +159,7 @@ main{
 .topbar a.link:hover{
   transform: translateY(-1px);
   box-shadow: var(--shadow-1);
-  border-color: rgba(39, 107, 176, 0.18);
+  border-color: rgba(176, 39, 39, 0.18);
 }
 .topbar a.link.active{
   border-color: rgba(181,138,42,.55);
@@ -639,7 +639,7 @@ body.menu-lock::before{
    FOOTER (NO CARDS) - columns only, same HTML order
 ========================================================= */
 .s-footer{
-  background: linear-gradient(180deg, #7c5f21, #b58a2a,#7c5f21);
+  background: linear-gradient(180deg, #191650, #191650,#191650);
   color: rgba(255,255,255,.86);
   margin-top: 30px;
 }
@@ -674,7 +674,7 @@ body.menu-lock::before{
 .s-footer__divider{
   height: 2px;
   width: 56px;
-  background: rgba(181,138,42,.85);
+  background: rgba(240, 240, 240, 0.85);
   border-radius: 999px;
   margin-bottom: 12px;
 }
